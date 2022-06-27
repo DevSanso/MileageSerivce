@@ -20,9 +20,9 @@ CREATE TABLE review_content(
 
 CREATE TABLE review_point_flag(
     review_id CHAR(36),
-    is_text_write TINYINT(1),
-    is_update_image TINYINT(1),
-    is_first_review TINYINT(1),
+    is_text_write TINYINT(1) NOT NULL,
+    is_update_image TINYINT(1) NOT NULL,
+    is_first_review TINYINT(1) NOT NULL,
 
     FOREIGN KEY eview_point_flag(review_id) REFERENCES review(review_id)
 );
