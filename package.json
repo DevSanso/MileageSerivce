@@ -18,11 +18,13 @@
   "homepage": "https://github.com/DevSanso/MileageSerivce#readme",
   "devDependencies": {
     "@types/koa": "^2.13.4",
+    "@types/koa-bodyparser": "^4.3.7",
     "typescript": "^4.7.4"
   },
   "dependencies": {
     "@types/koa-router": "^7.4.4",
     "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.1.1",
     "mysql2": "^2.3.3"
   }
