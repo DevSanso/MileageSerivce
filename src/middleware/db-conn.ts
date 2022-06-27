@@ -14,8 +14,10 @@ const pool = mysql.createPool({
     database : config.dbName
 });
 
-const middleware  = (ctx : Koa.Context,next : Koa.Next) => {
+const middleware  = async (ctx : Koa.Context,next : Koa.Next) => {
     ctx.dbPoolConn  = pool.getConnection();
+
+    await next();
 };
 
 export default middleware;
