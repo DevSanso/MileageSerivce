@@ -1,0 +1,29 @@
+{
+  "name": "mileageserivce",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevSanso/MileageSerivce.git"
+  },
+  "author": "Sunken Ahn <devsanso@outlook.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DevSanso/MileageSerivce/issues"
+  },
+  "homepage": "https://github.com/DevSanso/MileageSerivce#readme",
+  "devDependencies": {
+    "@types/koa": "^2.13.4",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@types/koa-router": "^7.4.4",
+    "koa": "^2.13.4",
+    "koa-router": "^10.1.1",
+    "mysql2": "^2.3.3"
+  }
+}
