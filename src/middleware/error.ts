@@ -7,7 +7,7 @@ const castErrorObject = (e : unknown) : ErrorObject => {
     if(e instanceof ErrorObject)
         return e as ErrorObject;
 
-    return new ErrorObject(ErrorType.Unknown,500,JSON.stringify(e));
+    return new ErrorObject(ErrorType.Unknown,"unknown",500,JSON.stringify(e));
 }
 
 const middleware  = async (ctx : Koa.Context,next : Koa.Next) => {
@@ -20,8 +20,6 @@ const middleware  = async (ctx : Koa.Context,next : Koa.Next) => {
             ctx.body = err.message;
         }
     }
-
-    await next();
 };
 
 export default middleware;

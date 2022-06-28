@@ -31,7 +31,7 @@ controller.post("review-event","/events",async (ctx,next)=> {
     const requestBody : BodyType = ctx.request.body;
 
     if(!checkP(requestBody))
-        throw new ErrorObject(ErrorType.Request,400,`bad request body : ${JSON.stringify(requestBody)}`);
+        throw new ErrorObject(ErrorType.Request,"/events",400,`bad request body : ${JSON.stringify(requestBody)}`);
 
     const convertCtx = convertCtxType(ctx);
 
@@ -41,11 +41,12 @@ controller.post("review-event","/events",async (ctx,next)=> {
         ctx.body = "Ok";
     }
     else if(requestBody.action == "MOD" || requestBody.action == "DELETE") {
-        throw new ErrorObject(ErrorType.Request,400,`not implement action handle : ${requestBody.action}`);
+        throw new ErrorObject(ErrorType.Request,"/events",400,`not implement action handle : ${requestBody.action}`);
     }
     else {
-        throw new ErrorObject(ErrorType.Request,400,`not allow this action : ${requestBody.action}`);
+        throw new ErrorObject(ErrorType.Request,"/events",400,`not allow this action : ${requestBody.action}`);
     }
+
     next();
 }) ;
 
