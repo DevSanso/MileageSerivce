@@ -61,9 +61,6 @@ describe("ReviewDao Object Test",()=>{
         expect(reviewFlag.isUpdateImage).to.equal(false);
     });
 
-
-    
-
     
     it("dao 첫번째 리뷰 관련 처리 test",async() => {
 
@@ -77,7 +74,7 @@ describe("ReviewDao Object Test",()=>{
             await dao.createReviewPointFlag(review_id);
         }
 
-        await dao.updateReviewPoint(reviewId,placeId);
+        await dao.updateReviewPointFlag(reviewId,placeId);
         let reviewFlag = await dao.selectReviewPointFlag(reviewId) as ReviewPointFlag;
         expect(reviewFlag.isFirstReview).to.equal(true);
         const secondReviewId = uuid();
@@ -86,14 +83,14 @@ describe("ReviewDao Object Test",()=>{
         const thirdUserId = uuid();
 
         await createOtherFlag(secondReviewId,secondUserId);
-        await dao.updateReviewPoint(secondReviewId,placeId);
+        await dao.updateReviewPointFlag(secondReviewId,placeId);
         reviewFlag = await dao.selectReviewPointFlag(secondReviewId) as ReviewPointFlag;
         expect(reviewFlag.isFirstReview).to.equal(false);
 
         await dao.deleteReview(reviewId);
 
         await createOtherFlag(thirdReviewId,thirdUserId);
-        await dao.updateReviewPoint(thirdReviewId,placeId);
+        await dao.updateReviewPointFlag(thirdReviewId,placeId);
         reviewFlag = await dao.selectReviewPointFlag(thirdReviewId) as ReviewPointFlag;
         expect(reviewFlag.isFirstReview).to.equal(true);
     });
