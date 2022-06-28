@@ -18,7 +18,7 @@ CREATE TRIGGER delete_review_after
             SELECT review_id,place_id 
             FROM point_increase_log WHERE review_id = OLD.review_id;
 
-            UPDATE review_deleted_log SET log_date = NOW() WHERE review_id = OLD.review_id;
+            UPDATE point_deleted_log SET log_date = NOW() WHERE review_id = OLD.review_id;
         END$$
 DELIMITER ;
 
