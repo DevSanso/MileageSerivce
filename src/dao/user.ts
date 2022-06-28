@@ -6,6 +6,7 @@ import UserPoint from '../models/user_point';
 const updateUserPointQuery = (userId : string) => `update_user_point_proc(${userId});`;
 const selectUserPointQuery = (userId : string) => 
 `SELECT point_score FROM user_point WHERE user_id=${userId} LIMIT 1;`;
+const createUserPointQuery = (userId : string) => `INSERT INTO user_point VALUES(${userId},0);`;
 
 class UserDao {
     private connPromise : Promise<mysql.PoolConnection>;
@@ -21,7 +22,12 @@ class UserDao {
         const conn = await this.connPromise;
         const [rows,_] : [RowDataPacket[],FieldPacket[]]= await conn.query(selectUserPointQuery(userId));
         return transUserPoint(rows[0]);
-    }
+    };
+
+    public createUserPoint = async (userId : string) => {
+        const conn = await this.connPromise;
+        await conn.execute(createUserPointQuery(userId));
+    };
     
 }
 
