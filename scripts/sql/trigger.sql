@@ -4,7 +4,7 @@ CREATE TRIGGER delete_review_before
     BEFORE DELETE ON review FOR EACH ROW
         BEGIN
             DELETE FROM review_content WHERE review_id = OLD.review_id;
-            DELETE FROM review_point WHERE review_id = OLD.review_id;
+            DELETE FROM review_point_flag WHERE review_id = OLD.review_id;
         END $$
 DELIMITER ;
 
