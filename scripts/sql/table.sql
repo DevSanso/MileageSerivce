@@ -1,6 +1,3 @@
-CREATE TABLE user(
-    user_id CHAR(36) PRIMARY KEY
-);
 
 CREATE TABLE review(
     review_id CHAR(36),
@@ -29,10 +26,8 @@ CREATE TABLE review_point_flag(
 
 
 CREATE TABLE user_point(
-    user_id   CHAR(36),
-    point_score INTEGER,
-
-     FOREIGN KEY user_point(user_id) REFERENCES user(user_id)
+    user_id   CHAR(36) NOT NULL,
+    point_score INTEGER NOT NULL,
 );
 
 
@@ -40,13 +35,13 @@ CREATE TABLE point_increase_log(
     place_id CHAR(36) NOT NULL,
     review_id  CHAR(36) NOT NULL,
 
-    log_date DATETIME
+    log_date DATETIME NOT NULL
 );
 
 CREATE TABLE point_deleted_log(
     place_id CHAR(36) NOT NULL,
     review_id CHAR(36) NOT NULL,
 
-    log_date DATETIME
+    log_date DATETIME NOT NULL
 );
 
