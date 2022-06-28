@@ -24,10 +24,10 @@ const selectReviewPointFlagQuery = (reviewId : string) =>
 const selectReviewQuery = (reviewId : string) => 
 `SELECT user_id,place_id,comment FROM review WHERE review_id="${reviewId}";`;
 
-const updateReviewPointTextFlagQuery = (review_id : string) =>`update_review_point_text_flag_proc("${review_id}");`;
-const updateReviewPointImageFlagQuery = (review_id : string) =>`update_review_point_image_flag_proc("${review_id}");`;
+const updateReviewPointTextFlagQuery = (review_id : string) =>`CALL update_review_point_text_flag_proc("${review_id}");`;
+const updateReviewPointImageFlagQuery = (review_id : string) =>`CALL update_review_point_image_flag_proc("${review_id}");`;
 const updateReviewPointFirstReviewFlagQuery = (review_id : string,place_id : string) =>
-`update_review_point_first_review_flag_proc("${review_id}","${place_id}");`;
+`CALL update_review_point_first_review_flag_proc("${review_id}","${place_id}");`;
 
 const insertReviewQuery = (review_id : string,user_id : string,place_id : string,comment : string | null) =>
 "INSERT INTO review(review_id,user_id,place_id,comment) "+
