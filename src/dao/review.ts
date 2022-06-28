@@ -74,7 +74,7 @@ class ReviewDao {
         
         return null;
     };
-    public updateReviewPoint = async (reviewId : string,placeId : string) => {
+    public updateReviewPointFlag = async (reviewId : string,placeId : string) => {
         const conn = await this.connPromise;
         const textAsyncCall = conn.execute(updateReviewPointTextFlagQuery(reviewId));
         const imgAsyncCall =conn.execute(updateReviewPointImageFlagQuery(reviewId));
