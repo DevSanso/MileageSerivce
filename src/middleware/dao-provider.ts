@@ -18,10 +18,11 @@ const commit= async (conn : PoolConnection) => conn.commit();
 const createReviewDao = async (conn : Promise<mysql.PoolConnection>,isTx : boolean) : CreateFuncReturnType<ReviewDao> => {
     if(isTx) {
         (await conn).beginTransaction();
+        const dao = new ReviewDao(conn);
         return {
             rollback : async() => {await rollback(await conn);},
             commit : async () => {await commit(await conn)},
-            dao : () => new ReviewDao(conn)
+            dao : () => dao
         };
     }
 
@@ -31,10 +32,11 @@ const createReviewDao = async (conn : Promise<mysql.PoolConnection>,isTx : boole
 const createUserDao = async (conn : Promise<mysql.PoolConnection>,isTx : boolean)  : CreateFuncReturnType<UserDao> => {
     if(isTx) {
         (await conn).beginTransaction();
+        const dao = new UserDao(conn);
         return {
             rollback : async() => {await rollback(await conn);},
             commit : async () => {await commit(await conn)},
-            dao : () => new UserDao(conn)
+            dao : () => dao
         };
     }
 
