@@ -2,7 +2,7 @@
 
 export default interface RequestBody {
     type : string,
-    action : "ADD" | "MOD" | "DELETE" | string,
+    action :  string,
     reviewId : string,
     content : string,
     attachedPhotoIds : Array<string>,
