@@ -46,7 +46,7 @@ CREATE PROCEDURE update_review_point_first_review_flag_proc(
 )
 BEGIN
 UPDATE review_point_flag SET is_first_review = NOT EXISTS(
-    SELECT * FROM (SELECT review_id,is_first_review  FROM review_point_flag) AS flag, point_increase_log AS log
+    SELECT * FROM (SELECT review_id,is_first_review  FROM review_point_flag) AS flag, review_create_log AS log
     WHERE flag.is_first_review = 1  AND log.place_id = PARAM_PLACE_UUID AND log.review_id = flag.review_id LIMIT 1
     ) WHERE review_point_flag.review_id = PARAM_REVIEW_UUID;
 END $$

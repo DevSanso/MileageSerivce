@@ -31,14 +31,14 @@ CREATE TABLE user_point(
 );
 
 
-CREATE TABLE point_increase_log(
+CREATE TABLE review_create_log(
     place_id CHAR(36) NOT NULL,
     review_id  CHAR(36) NOT NULL,
 
     log_date DATETIME NOT NULL
 );
 
-CREATE TABLE point_deleted_log(
+CREATE TABLE review_deleted_log(
     place_id CHAR(36) NOT NULL,
     review_id CHAR(36) NOT NULL,
 

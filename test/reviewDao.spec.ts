@@ -11,8 +11,8 @@ import ReviewPointFlag from '../src/models/review_point_flag';
 
 const deleteAllData = async (conn : PoolConnection) => {
     await conn.execute("DELETE FROM review;");
-    conn.execute("DELETE FROM point_increase_log;");
-    conn.execute("DELETE FROM point_deleted_log;");
+    conn.execute("DELETE FROM review_create_log;");
+    conn.execute("DELETE FROM review_deleted_log;");
     conn.execute("DELETE FROM user_point;");
 }
 
