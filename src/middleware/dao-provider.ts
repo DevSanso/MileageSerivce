@@ -3,6 +3,8 @@ import Koa from 'koa';
 
 import ReviewDao from '../dao/review';
 import UserDao from '../dao/user';
+import LogDao from '../dao/log';
+
 import DaoTxController from './type/dao-tx-controller';
 
 import '../utils/extend/koa/context_dbconn';
@@ -43,10 +45,25 @@ const createUserDao = async (conn : Promise<mysql.PoolConnection>,isTx : boolean
     return new UserDao(conn);
 };
 
+const createLogDao = async (conn : Promise<mysql.PoolConnection>,isTx : boolean)  : CreateFuncReturnType<LogDao> => {
+    if(isTx) {
+        (await conn).beginTransaction();
+        const dao = new LogDao(conn);
+        return {
+            rollback : async() => {await rollback(await conn);},
+            commit : async () => {await commit(await conn)},
+            dao : () => dao
+        };
+    }
+
+    return new LogDao(conn);
+};
+
 const middleware  =async (ctx : Koa.Context,next : Koa.Next) => {
     ctx.daoProvider = {
         review : (isTx : boolean) => createReviewDao(ctx.dbPoolConn,isTx),
-        user : (isTx : boolean) => createUserDao(ctx.dbPoolConn,isTx)
+        user : (isTx : boolean) => createUserDao(ctx.dbPoolConn,isTx),
+        log : (isTx : boolean) => createLogDao(ctx.dbPoolConn,isTx)
     };
     await next();
 };
