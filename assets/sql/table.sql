@@ -45,3 +45,7 @@ CREATE TABLE review_deleted_log(
     log_date DATETIME NOT NULL
 );
 
+CREATE TABLE point_plus_log(
+    review_id  CHAR(36) NOT NULL,
+    log_date DATETIME NOT NULL
+);
