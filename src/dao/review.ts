@@ -4,9 +4,14 @@ import ReviewPointFlag from '../models/review_point_flag';
 import ReviewContent from '../models/review_content';
 import Review from '../models/review';
 
+import Body from '../api/body/event';
+
 import transReviewPointFlag from '../dtfp/review_point_flag';
 import transReviewContent from '../dtfp/review_content';
 import transReview from '../dtfp/review';
+
+
+type InsertParam = Omit<Body,"action" | "type">;
 
 const selectReviewPointFlagQuery = (reviewId : string) => 
 "SELECT is_text_write, is_update_image,is_first_review" +
@@ -24,43 +29,64 @@ const updateReviewPointImageFlagQuery = (review_id : string) =>`update_review_po
 const updateReviewPointFirstReviewFlagQuery = (review_id : string,place_id : string) =>
 `update_review_point_first_review_flag_proc(${review_id},${place_id});`;
 
+const insertReviewQuery = (review_id : string,user_id : string,place_id : string,comment : string) =>
+`INSERT INTO review(review_id,user_id,place_id,comment) VALUES(${review_id},${user_id},${place_id},${comment});`;
+
+
+const insertReviewCotentQuery = (review_id : string,image_id : string) =>
+`INSERT INTO review_content(review_id,image_id) VALUES(${review_id},${image_id});`;
+
 class ReviewDao {
     private connPromise : Promise<mysql.PoolConnection>;
     public constructor(conn : Promise<mysql.PoolConnection>) {
         this.connPromise = conn;
     }
 
-    public selectReviewPointFlag = async (review_id : string) : Promise<ReviewPointFlag>=> {
-        const query = selectReviewPointFlagQuery(review_id);
+    public selectReviewPointFlag = async (reviewId : string) : Promise<ReviewPointFlag>=> {
+        const query = selectReviewPointFlagQuery(reviewId);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
         return transReviewPointFlag(rows[0]);
     };
     
-    public selectReviewContent = async (review_id : string) : Promise<Array<ReviewContent>> => {
-        const query = selectReviewContentQuery(review_id);
+    public selectReviewContent = async (reviewId : string) : Promise<Array<ReviewContent>> => {
+        const query = selectReviewContentQuery(reviewId);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
         
         return rows.map(value => transReviewContent(value));
     };
 
-    public selectReview = async (review_id : string) : Promise<Review> => {
-        const query = selectReviewQuery(review_id);
+    public selectReview = async (reviewId : string) : Promise<Review> => {
+        const query = selectReviewQuery(reviewId);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
         
         return transReview(rows[0]);
     };
-    public updateReviewPoint = async (review_id : string,place_id : string) => {
+    public updateReviewPoint = async (reviewId : string,placeId : string) => {
         const conn = await this.connPromise;
-        const textAsyncCall = conn.execute(updateReviewPointTextFlagQuery(review_id));
-        const imgAsyncCall =conn.execute(updateReviewPointImageFlagQuery(review_id));
-        const firstReviewAsyncCall =conn.execute(updateReviewPointFirstReviewFlagQuery(review_id,place_id));
+        const textAsyncCall = conn.execute(updateReviewPointTextFlagQuery(reviewId));
+        const imgAsyncCall =conn.execute(updateReviewPointImageFlagQuery(reviewId));
+        const firstReviewAsyncCall =conn.execute(updateReviewPointFirstReviewFlagQuery(reviewId,placeId));
             
         await Promise.all([textAsyncCall,imgAsyncCall,firstReviewAsyncCall]);
         
     };
+
+    public insertReview = async (body : InsertParam) => {
+        const conn = await this.connPromise;
+        await conn.execute(insertReviewQuery(body.reviewId,body.userId,body.placeId,body.content));
+    };
+
+    public insertReviewContent = async (reviewId : string,imgId : string) => {
+        const conn = await this.connPromise;
+        await conn.execute(insertReviewCotentQuery(reviewId,imgId));
+    }
+    public createReviewPointFlag = async (reviewId : string) => {
+        const conn = await this.connPromise;
+        await conn.execute(`INSERT INTO review_point_flag VALUES(${reviewId},0,0,0);`);
+    }
 }
 
 export default ReviewDao;

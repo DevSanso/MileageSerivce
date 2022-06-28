@@ -1,7 +1,11 @@
-import mysql, { FieldPacket, RowDataPacket } from 'mysql2/promise';
+import mysql,{RowDataPacket,FieldPacket} from 'mysql2/promise';
 
+import transUserPoint from '../dtfp/user_point';
+import UserPoint from '../models/user_point';
 
 const updateUserPointQuery = (userId : string) => `update_user_point_proc(${userId});`;
+const selectUserPointQuery = (userId : string) => 
+`SELECT point_score FROM user_point WHERE user_id=${userId} LIMIT 1;`;
 
 class UserDao {
     private connPromise : Promise<mysql.PoolConnection>;
@@ -12,6 +16,13 @@ class UserDao {
         const conn = await this.connPromise;
         await conn.execute(updateUserPointQuery(userId));
     };
+
+    public selectUserPoint = async (userId : string) : Promise<UserPoint> => {
+        const conn = await this.connPromise;
+        const [rows,_] : [RowDataPacket[],FieldPacket[]]= await conn.query(selectUserPointQuery(userId));
+        return transUserPoint(rows[0]);
+    }
+    
 }
 
 export default UserDao;
