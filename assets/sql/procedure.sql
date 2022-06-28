@@ -45,12 +45,9 @@ CREATE PROCEDURE update_review_point_first_review_flag_proc(
     PARAM_PLACE_UUID CHAR(36)
 )
 BEGIN
-UPDATE review_point_flag SET is_first_review = EXISTS(
-        SELECT review_id FROM
-        (SELECT log_date 
-        FROM point_increase_log 
-        WHERE point_increase_log.place_id = PARAM_PLACE_UUID 
-        ORDER BY  point_increase_log.log_date DESC LIMIT 1) pre
-        WHERE pre.review_id = PARAM_REVIEW_UUID);
+UPDATE review_point_flag SET is_first_review = NOT EXISTS(
+    SELECT * FROM (SELECT review_id,is_first_review  FROM review_point_flag) AS flag, point_increase_log AS log
+    WHERE flag.is_first_review = 1  AND log.place_id = PARAM_PLACE_UUID AND log.review_id = flag.review_id LIMIT 1
+    ) WHERE review_point_flag.review_id = PARAM_REVIEW_UUID;
 END $$
 DELIMITER ;
