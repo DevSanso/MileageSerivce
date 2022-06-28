@@ -1,23 +1,24 @@
 import Koa from 'koa';
 
 import RequestBody from '../../api/body/event';
+import ReviewDao from '../../dao/review';
 
 
-import UserDao from '../../dao/user';
+
 import DaoTxController from '../../middleware/type/dao-tx-controller';
 
 import '../../utils/extend/koa/context_dao';
 
 
-const updateDbUserPointService = async (ctx : Koa.Context) => {
+const updateReviewPointFlagService = async (ctx : Koa.Context) => {
     const body = ctx.request.body as RequestBody;
-    const daoTx = await ctx.daoProvider.user(true) as DaoTxController<UserDao>;
+    const daoTx = await ctx.daoProvider.review(true) as DaoTxController<ReviewDao>;
     try {
-        await daoTx.dao().updateUserPoint(body.userId);
+        await daoTx.dao().updateReviewPoint(body.reviewId,body.placeId);
     }catch(e) {
         daoTx.rollback();
         throw e;
     }
 }
 
-export default updateDbUserPointService;
+export default updateReviewPointFlagService;

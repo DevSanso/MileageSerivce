@@ -19,6 +19,10 @@ const selectReviewPointFlagQuery = (reviewId : string) =>
 const selectReviewQuery = (reviewId : string) => 
 `SELECT user_id,place_id,comment FROM review WHERE review_id=${reviewId};`;
 
+const updateReviewPointTextFlagQuery = (review_id : string) =>`update_review_point_text_flag_proc(${review_id});`;
+const updateReviewPointImageFlagQuery = (review_id : string) =>`update_review_point_image_flag_proc(${review_id});`;
+const updateReviewPointFirstReviewFlagQuery = (review_id : string,place_id : string) =>
+`update_review_point_first_review_flag_proc(${review_id},${place_id});`;
 
 class ReviewDao {
     private connPromise : Promise<mysql.PoolConnection>;
@@ -26,28 +30,37 @@ class ReviewDao {
         this.connPromise = conn;
     }
 
-    public reviewPointFlag = async (review_id : string) : Promise<ReviewPointFlag>=> {
+    public selectReviewPointFlag = async (review_id : string) : Promise<ReviewPointFlag>=> {
         const query = selectReviewPointFlagQuery(review_id);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
         return transReviewPointFlag(rows[0]);
-    }
+    };
     
-    public reviewContent = async (review_id : string) : Promise<Array<ReviewContent>> => {
+    public selectReviewContent = async (review_id : string) : Promise<Array<ReviewContent>> => {
         const query = selectReviewContentQuery(review_id);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
         
         return rows.map(value => transReviewContent(value));
-    }
+    };
 
-    public review = async (review_id : string) : Promise<Review> => {
+    public selectReview = async (review_id : string) : Promise<Review> => {
         const query = selectReviewQuery(review_id);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
         
         return transReview(rows[0]);
-    }
+    };
+    public updateReviewPoint = async (review_id : string,place_id : string) => {
+        const conn = await this.connPromise;
+        const textAsyncCall = conn.execute(updateReviewPointTextFlagQuery(review_id));
+        const imgAsyncCall =conn.execute(updateReviewPointImageFlagQuery(review_id));
+        const firstReviewAsyncCall =conn.execute(updateReviewPointFirstReviewFlagQuery(review_id,place_id));
+            
+        await Promise.all([textAsyncCall,imgAsyncCall,firstReviewAsyncCall]);
+        
+    };
 }
 
 export default ReviewDao;

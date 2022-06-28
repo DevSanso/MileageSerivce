@@ -11,7 +11,7 @@ class UserDao {
     public updateUserPoint = async (userId : string)  => {
         const conn = await this.connPromise;
         await conn.execute(updateUserPointQuery(userId));
-    }
+    };
 }
 
 export default UserDao;
