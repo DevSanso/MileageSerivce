@@ -46,27 +46,33 @@ class ReviewDao {
         this.connPromise = conn;
     }
 
-    public selectReviewPointFlag = async (reviewId : string) : Promise<ReviewPointFlag>=> {
+    public selectReviewPointFlag = async (reviewId : string) : Promise<ReviewPointFlag | null>=> {
         const query = selectReviewPointFlagQuery(reviewId);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
+
+        if(rows[0] == undefined)return null;
         return transReviewPointFlag(rows[0]);
     };
     
-    public selectReviewContent = async (reviewId : string) : Promise<Array<ReviewContent>> => {
+    public selectReviewContent = async (reviewId : string) : Promise<Array<ReviewContent> | null> => {
         const query = selectReviewContentQuery(reviewId);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
-        
+
+        if (rows.length = 0)return null;
         return rows.map(value => transReviewContent(value));
     };
 
-    public selectReview = async (reviewId : string) : Promise<Review> => {
+    public selectReview = async (reviewId : string) : Promise<Review | null> => {
         const query = selectReviewQuery(reviewId);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
+
+        if (rows[0] != undefined) 
+            return transReview(rows[0]);
         
-        return transReview(rows[0]);
+        return null;
     };
     public updateReviewPoint = async (reviewId : string,placeId : string) => {
         const conn = await this.connPromise;

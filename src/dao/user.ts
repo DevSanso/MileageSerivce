@@ -8,6 +8,8 @@ const selectUserPointQuery = (userId : string) =>
 `SELECT point_score FROM user_point WHERE user_id=${userId} LIMIT 1;`;
 const createUserPointQuery = (userId : string) => `INSERT INTO user_point VALUES(${userId},0);`;
 
+
+
 class UserDao {
     private connPromise : Promise<mysql.PoolConnection>;
     public constructor(conn : Promise<mysql.PoolConnection>) {
@@ -18,9 +20,11 @@ class UserDao {
         await conn.execute(updateUserPointQuery(userId));
     };
 
-    public selectUserPoint = async (userId : string) : Promise<UserPoint> => {
+    public selectUserPoint = async (userId : string) : Promise<UserPoint | null> => {
         const conn = await this.connPromise;
-        const [rows,_] : [RowDataPacket[],FieldPacket[]]= await conn.query(selectUserPointQuery(userId));
+        const [rows,_] : [RowDataPacket[],FieldPacket[]] = await conn.query(selectUserPointQuery(userId));
+
+        if(rows[0] == undefined)return null;
         return transUserPoint(rows[0]);
     };
 
