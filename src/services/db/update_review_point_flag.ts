@@ -7,7 +7,7 @@ import ReviewDao from '../../dao/review';
 
 import DaoTxController from '../../middleware/type/dao-tx-controller';
 
-import '../../utils/extend/koa/context_dao';
+
 
 
 const updateReviewPointFlagService = async (ctx : Koa.Context) => {
@@ -19,6 +19,7 @@ const updateReviewPointFlagService = async (ctx : Koa.Context) => {
         daoTx.rollback();
         throw e;
     }
+    daoTx.commit();
 }
 
 export default updateReviewPointFlagService;

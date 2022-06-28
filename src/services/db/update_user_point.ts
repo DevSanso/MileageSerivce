@@ -6,7 +6,7 @@ import RequestBody from '../../api/body/event';
 import UserDao from '../../dao/user';
 import DaoTxController from '../../middleware/type/dao-tx-controller';
 
-import '../../utils/extend/koa/context_dao';
+
 
 
 const updateDbUserPointService = async (ctx : Koa.Context) => {
@@ -18,6 +18,7 @@ const updateDbUserPointService = async (ctx : Koa.Context) => {
         daoTx.rollback();
         throw e;
     }
+    daoTx.commit();
 }
 
 export default updateDbUserPointService;
