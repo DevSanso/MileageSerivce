@@ -20,8 +20,8 @@ DELIMITER $$
 CREATE TRIGGER delete_review_after
     AFTER DELETE ON review FOR EACH ROW
         BEGIN
-            INSERT INTO point_deleted_log(review_id,place_id)
-            SELECT review_id,place_id 
+            INSERT INTO point_deleted_log(review_id,place_id,log_date)
+            SELECT review_id,place_id,log_date 
             FROM point_increase_log WHERE review_id = OLD.review_id;
 
             UPDATE point_deleted_log SET log_date = NOW() WHERE review_id = OLD.review_id;
