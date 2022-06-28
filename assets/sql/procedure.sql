@@ -1,5 +1,3 @@
-update_review_point
-
 
 DELIMITER $$
 CREATE PROCEDURE update_user_point_proc(

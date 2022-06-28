@@ -27,7 +27,7 @@ CREATE TABLE review_point_flag(
 
 CREATE TABLE user_point(
     user_id   CHAR(36) NOT NULL,
-    point_score INTEGER NOT NULL,
+    point_score INTEGER NOT NULL
 );
 
 
