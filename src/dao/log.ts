@@ -2,7 +2,7 @@ import mysql from 'mysql2/promise';
 
 
 const insertPushPointQuery = (reviewId : string,writeFlag : boolean,imgFlag : boolean,firstFlag : boolean) =>
-`INSERT INTO point_plus_log VALUES(${reviewId},${writeFlag},${imgFlag},${firstFlag});`;
+`INSERT INTO point_plus_log VALUES(${reviewId},${writeFlag},${imgFlag},${firstFlag},NOW());`;
 
 class LogDao {
     private connPromise : Promise<mysql.PoolConnection>;
