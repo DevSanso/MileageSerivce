@@ -16,7 +16,7 @@ DELIMITER ;
 
 
 DELIMITER $$
-CREATE PROCEDURE update_review_point_text_flag(
+CREATE PROCEDURE update_review_point_text_flag_proc(
     PARAM_REVIEW_UUID CHAR(36)
 )
 BEGIN
@@ -29,7 +29,7 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE update_review_point_image_flag(
+CREATE PROCEDURE update_review_point_image_flag_proc(
     PARAM_REVIEW_UUID CHAR(36)
 )
 BEGIN
@@ -42,7 +42,7 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE update_review_point_first_review_flag(
+CREATE PROCEDURE update_review_point_first_review_flag_proc(
     PARAM_REVIEW_UUID CHAR(36),
     PARAM_PLACE_UUID CHAR(36)
 )
