@@ -9,9 +9,8 @@ import '../utils/extend/koa/context_dbconn';
 
 
 const middleware  =async (ctx : Koa.Context,next : Koa.Next) => {
-    (await ctx.dbPoolConn).release();
-
     await next();
+    (await ctx.dbPoolConn).release();
 };
 
 export default middleware;
