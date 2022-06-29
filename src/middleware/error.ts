@@ -8,7 +8,20 @@ const castErrorObject = (e : unknown) : ErrorObject => {
         return e as ErrorObject;
 
     return new ErrorObject(ErrorType.Unknown,"unknown",500,JSON.stringify(e));
-}
+};
+
+const print = (e : ErrorObject) => {
+    const t = (() => {
+        if (e.type == ErrorType.Request)return "User Reuquest";
+        else if(e.type == ErrorType.System)return "System";
+        else if(e.type == ErrorType.DB)return "DataBase";
+
+        return "unknown";
+    })();
+
+    console.log(`Error => date : ${(new Date().toString())} , `+
+    `location : ${e.crashPlace} , type : ${t} , status : ${e.code}, message : ${e.message}`);
+};
 
 const middleware  = async (ctx : Koa.Context,next : Koa.Next) => {
     try {
@@ -19,6 +32,7 @@ const middleware  = async (ctx : Koa.Context,next : Koa.Next) => {
             ctx.status = err.code;
             ctx.body = err.message;
         }
+
     }
 };
 

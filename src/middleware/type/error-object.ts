@@ -1,7 +1,8 @@
 export enum ErrorType {
     Request,
     System,
-    Unknown
+    Unknown,
+    DB
 }
 
 export class ErrorObject {
