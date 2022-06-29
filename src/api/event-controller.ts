@@ -6,12 +6,15 @@ import BodyType from './body/event';
 
 import createReviewService from '../services/db/create_review';
 import selectUserPointService from '../services/db/select_user_point';
+import selectReviewPointFlag from '../services/db/select_review_point_flag';
 import createUserPointService from '../services/db/create_user_point';
-import updateReviewPointFlagService from '../services/db/update_review_point_and_update_plus_log_flag';
+import insertPointPlusLogService from '../services/db/insert_plus_log';
+import updateReviewPointFlagService from '../services/db/update_review_point_flag';
 
 import {convertCtxType} from '../utils/koa/convert_ctx_type';
 import {checkProps} from '../utils/json/check_props';
 import {ErrorObject,ErrorType} from '../middleware/type/error-object';
+import ReviewPointFlag from '../models/review_point_flag';
 
 
 
@@ -19,12 +22,24 @@ const controller = new Router();
 
 
 
+const afterTreatment = async (ctx : Context) => {
+    const body : Pick<BodyType,"reviewId"> = ctx.request.body;
+    const flag = await selectReviewPointFlag(ctx,body.reviewId) as ReviewPointFlag;
+
+    if(flag.isFirstReview || flag.isTextWrite || flag.isUpdateImage) 
+        await insertPointPlusLogService(ctx,body.reviewId,flag);
+}
+
 const addReviewHandle = async (ctx : Context)=> {
     await createReviewService(ctx);
     const exist = await selectUserPointService(ctx);
     if (exist == null)await createUserPointService(ctx); 
     await updateReviewPointFlagService(ctx);
+
+    afterTreatment(ctx);
 }
+
+
 
 const checkP = (body : any) => checkProps<BodyType>(body,
     ["action","attachedPhotoIds","content","placeId","reviewId","type","userId"]);
@@ -38,7 +53,7 @@ controller.post("review-event","/events",async (ctx)=> {
     const convertCtx = convertCtxType(ctx);
 
     if(requestBody.action == "ADD") {
-        addReviewHandle(convertCtx);
+        await addReviewHandle(convertCtx);
         ctx.status = 200;
         ctx.body = "Ok";
     }
@@ -48,8 +63,6 @@ controller.post("review-event","/events",async (ctx)=> {
     else {
         throw new ErrorObject(ErrorType.Request,"/events",400,`not allow this action : ${requestBody.action}`);
     }
-
-
 }) ;
 
 
