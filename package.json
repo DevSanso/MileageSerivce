@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha test/**/*.spec.ts -r ts-node/register"
+    "test": "npx mocha test/list.spec.ts -r ts-node/register",
+    "test-server" : "npx ts-node ./scripts/ts/test_run_server.ts"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
     "@types/koa": "^2.13.4",
     "@types/koa-bodyparser": "^4.3.7",
     "@types/mocha": "^9.1.1",
+    "axios": "^0.27.2",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
     "ts-node": "^10.8.1",
