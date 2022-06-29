@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx mocha test/list.spec.ts -r ts-node/register",
+    "test": "npx mocha test/list.spec.ts -r ts-node/register --exit",
     "test-server" : "npx ts-node ./scripts/ts/test_run_server.ts"
   },
   "repository": {
