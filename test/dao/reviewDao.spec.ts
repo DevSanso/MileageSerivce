@@ -1,12 +1,12 @@
 import {expect} from 'chai';
 
-import dbPoolGen from "./util/db";
-import ReviewDao from "../src/dao/review";
+import dbPoolGen from "../util/db";
+import ReviewDao from "../../src/dao/review";
 import {uuid} from 'uuidv4';
-import Review from '../src/models/review';
-import ReviewContent from '../src/models/review_content';
-import ReviewPointFlag from '../src/models/review_point_flag';
-import deleteAllData from './util/deleteAll';
+import Review from '../../src/models/review';
+import ReviewContent from '../../src/models/review_content';
+import ReviewPointFlag from '../../src/models/review_point_flag';
+import deleteAllData from '../util/deleteAll';
 
 
 describe("ReviewDao Object Test",()=>{
@@ -21,7 +21,7 @@ describe("ReviewDao Object Test",()=>{
     const imageIds = [uuid(),uuid()];
     const comment = "hello word";
 
-    it("dao insert test",async () => {
+    it("dao 리뷰 생성 test",async () => {
         await dao.insertReview({
             reviewId : reviewId,
             placeId : placeId,
@@ -31,7 +31,7 @@ describe("ReviewDao Object Test",()=>{
         await imageIds.forEach(value => dao.insertReviewContent(reviewId,value));
         await dao.createReviewPointFlag(reviewId);
     });
-   it("dao select review test",async() => {
+   it("dao 리뷰 조회  test",async() => {
         const review = await dao.selectReview(reviewId) as Review;
         expect(review.comment).to.equal(comment);
         expect(review.userId).to.equal(userId);
@@ -40,14 +40,14 @@ describe("ReviewDao Object Test",()=>{
         expect(review1).to.equal(null);
    });
 
-   it("dao select review content test",async() => {
+   it("dao 리뷰 이미지 배열 조회 test",async() => {
         const reviewContent = await dao.selectReviewContent(reviewId) as Array<ReviewContent>;
         for(let i = 0;i<reviewContent.length;i++) {
             const str = imageIds.find(value => value == reviewContent[i].imageId);
             expect(str).to.not.equal(undefined);
         }
     });
-    it("dao select review point flag test",async() => {
+    it("dao 리뷰 포인트 플래그 조회 test",async() => {
         const reviewFlag = await dao.selectReviewPointFlag(reviewId) as ReviewPointFlag;
         expect(reviewFlag.isTextWrite).to.equal(false);
         expect(reviewFlag.isFirstReview).to.equal(false);

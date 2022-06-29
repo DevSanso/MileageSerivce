@@ -1,13 +1,13 @@
 import {expect} from 'chai';
 
-import dbPoolGen from "./util/db";
-import ReviewDao from "../src/dao/review";
-import UserDao from '../src/dao/user';
+import dbPoolGen from "../util/db";
+import ReviewDao from "../../src/dao/review";
+import UserDao from '../../src/dao/user';
 
 import {uuid} from 'uuidv4';
-import Review from '../src/models/review';
+import Review from '../../src/models/review';
 
-import deleteAllData from './util/deleteAll';
+import deleteAllData from '../util/deleteAll';
 
 const addReview = async(dao : ReviewDao,userId : string) => {
     const reviewId = uuid();
@@ -31,7 +31,7 @@ const addReview = async(dao : ReviewDao,userId : string) => {
 }
 
 
-describe("userDao Test",()=> {
+describe("userDao Object Test",()=> {
     const pool = dbPoolGen();
     const conn =  pool.getConnection();
 
@@ -43,14 +43,14 @@ describe("userDao Test",()=> {
    });
    const userDao = new UserDao(conn);
 
-   it("create user point tuple test",async()=>{
+   it("유저 총합 튜플 생성 test",async()=>{
         await userDao.createUserPoint(userUUID);
         const userPoint = userDao.selectUserPoint(userUUID);
         expect(userPoint).to.not.equal(null);
 
    });
 
-   it("update user point test",async() =>{
+   it("update 유저 총합 업데이트 test",async() =>{
         await userDao.updateUserPoint(userUUID);
         const userPoint = await userDao.selectUserPoint(userUUID);
         expect(userPoint?.score).to.equal(2);
