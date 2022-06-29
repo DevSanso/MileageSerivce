@@ -6,7 +6,7 @@ import error from './middleware/error';
 
 
 export default {
-    bodyParser : bodyParser,
+    bodyParser : bodyParser(),
     db : db,
     connRelease : connRelease,
     daoProvider : daoProvider,
