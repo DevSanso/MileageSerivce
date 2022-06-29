@@ -53,7 +53,7 @@ describe("userDao Object Test",()=> {
    it("update 유저 총합 업데이트 test",async() =>{
         await userDao.updateUserPoint(userUUID);
         const userPoint = await userDao.selectUserPoint(userUUID);
-        expect(userPoint?.score).to.equal(2);
+        expect(userPoint?.point).to.equal(2);
    });
 
    it("모든 테이블 튜플 삭제 ",async() => {

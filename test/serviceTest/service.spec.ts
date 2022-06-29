@@ -89,7 +89,7 @@ describe("서비스 test",()=> {
         it("유저 포인트 총합 값 확인",async() => {
             const res = await getUserPointService(onlyDaoCtx,firstBody.userId) as UserPoint;
             expect(res).to.not.equal(null);
-            expect(res.score).to.equal(4);
+            expect(res.point).to.equal(4);
         });
 
         it("데이터베이스 튜플 전체 삭제",async() => {
