@@ -2,8 +2,7 @@ import Router from 'koa-router';
 
 import {ExtendContext} from '../utils/extend/koa/context';
 
-import selectUserPointService from '../services/db/select_user_point';
-import updateUserPointService from '../services/db/update_user_point';
+import getUserPointService from '../services/get_user_point';
 import selectReviewPointService from '../services/db/select_review_point';
 
 import {UserRequestBody,ReviewRequestBody} from './body/select';
@@ -17,18 +16,8 @@ const selectUserPointHandle = async (ctx : ExtendContext)=> {
     const body = ctx.request.body as UserRequestBody;
     if(!checkProps<UserRequestBody>(body,["userId"])) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`bad request body : ${JSON.stringify(body)}`);
-    const conn = await ctx.dbPoolConn;
     
-    try {
-        await conn.beginTransaction();
-        await updateUserPointService(ctx,body.userId);
-        await conn.commit();
-    }catch(e) {
-        conn.rollback();
-        throw new ErrorObject(ErrorType.DB,"/point/user",500,JSON.stringify(e));
-    }
-
-    const res = await selectUserPointService(ctx,body.userId);
+    const res = getUserPointService(ctx,body.userId);
 
     if(res == null) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`not exist user data : ${body.userId}`);

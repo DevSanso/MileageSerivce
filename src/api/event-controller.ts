@@ -1,55 +1,26 @@
-import {Context} from 'koa';
 import Router from 'koa-router';
 
 import {ExtendContext} from '../utils/extend/koa/context';
 import BodyType from './body/event';
 
-import createReviewService from '../services/db/create_review';
-import selectUserPointService from '../services/db/select_user_point';
-import selectReviewPointFlag from '../services/db/select_review_point_flag';
-import createUserPointService from '../services/db/create_user_point';
-import insertPointPlusLogService from '../services/db/insert_plus_log';
-import updateReviewPointFlagService from '../services/db/update_review_point_flag';
+import addReviewService from '../services/add_review';
 
 import {checkProps} from '../utils/json/check_props';
 import {ErrorObject,ErrorType} from '../middleware/type/error-object';
-import ReviewPointFlag from '../models/review_point_flag';
 
 
 const controller = new Router<any,ExtendContext>();
 
-
-
-const afterTreatment = async (ctx : Context) => {
-    const body : Pick<BodyType,"reviewId"> = ctx.request.body;
-    const flag = await selectReviewPointFlag(ctx,body.reviewId) as ReviewPointFlag;
-
-    if(flag.isFirstReview || flag.isTextWrite || flag.isUpdateImage) 
-        await insertPointPlusLogService(ctx,body.reviewId,flag);
-}
-
-const addReviewHandle = async (ctx : Context,body : BodyType)=> {
-    const conn = await ctx.dbPoolConn;
-    conn.beginTransaction();
+const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
     try {
-        await createReviewService(ctx,body);
-        const exist = await selectUserPointService(ctx,body.userId);
-        if (exist == null)await createUserPointService(ctx,body.userId); 
-        await updateReviewPointFlagService(ctx,body.reviewId,body.placeId);
-        await conn.commit();
+        await addReviewService(ctx,body);
     }catch(e) {
-        conn.rollback();
         throw new ErrorObject(ErrorType.DB,"/events",500,JSON.stringify(e));
     }
-    afterTreatment(ctx);
 }
-
-
 
 const checkP = (body : any) => checkProps<BodyType>(body,
     ["action","attachedPhotoIds","content","placeId","reviewId","type","userId"]);
-
-
 
 
 controller.post("review-event","/events",async (ctx)=> {
@@ -59,7 +30,7 @@ controller.post("review-event","/events",async (ctx)=> {
         throw new ErrorObject(ErrorType.Request,"/events",400,`bad request body : ${JSON.stringify(requestBody)}`);
     
     if(requestBody.action == "ADD") {
-        await addReviewHandle(ctx,requestBody);
+        await addTypeReviewHandle(ctx,requestBody);
         ctx.status = 200;
         ctx.body = "Ok";
     }
