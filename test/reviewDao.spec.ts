@@ -3,18 +3,11 @@ import {expect} from 'chai';
 import dbPoolGen from "./util/db";
 import ReviewDao from "../src/dao/review";
 import {uuid} from 'uuidv4';
-import { PoolConnection } from 'mysql2/promise';
 import Review from '../src/models/review';
 import ReviewContent from '../src/models/review_content';
 import ReviewPointFlag from '../src/models/review_point_flag';
+import deleteAllData from './util/deleteAll';
 
-
-const deleteAllData = async (conn : PoolConnection) => {
-    await conn.execute("DELETE FROM review;");
-    conn.execute("DELETE FROM review_create_log;");
-    conn.execute("DELETE FROM review_deleted_log;");
-    conn.execute("DELETE FROM user_point;");
-}
 
 describe("ReviewDao Object Test",()=>{
     const pool = dbPoolGen();
@@ -76,6 +69,7 @@ describe("ReviewDao Object Test",()=>{
 
         await dao.updateReviewPointFlag(reviewId,placeId);
         let reviewFlag = await dao.selectReviewPointFlag(reviewId) as ReviewPointFlag;
+        
         expect(reviewFlag.isFirstReview).to.equal(true);
         const secondReviewId = uuid();
         const secondUserId = uuid();
@@ -86,6 +80,20 @@ describe("ReviewDao Object Test",()=>{
         await dao.updateReviewPointFlag(secondReviewId,placeId);
         reviewFlag = await dao.selectReviewPointFlag(secondReviewId) as ReviewPointFlag;
         expect(reviewFlag.isFirstReview).to.equal(false);
+
+
+        const otherReviewId = uuid();
+        const otherPlaceId = uuid();
+        await dao.insertReview({
+            reviewId : otherReviewId,
+            placeId : otherPlaceId,
+            userId : uuid(),
+            content : "hi"
+        });
+
+        await dao.updateReviewPointFlag(otherReviewId,otherPlaceId);
+        reviewFlag = await dao.selectReviewPointFlag(otherReviewId) as ReviewPointFlag;
+        expect(reviewFlag.isFirstReview).to.equal(true);
 
         await dao.deleteReview(reviewId);
 
