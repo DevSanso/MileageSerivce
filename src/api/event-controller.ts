@@ -39,7 +39,7 @@ const addReviewHandle = async (ctx : Context)=> {
         await conn.commit();
     }catch(e) {
         conn.rollback();
-        throw e;
+        throw new ErrorObject(ErrorType.DB,"/events",500,JSON.stringify(e));
     }
     afterTreatment(ctx);
 }
@@ -49,14 +49,15 @@ const addReviewHandle = async (ctx : Context)=> {
 const checkP = (body : any) => checkProps<BodyType>(body,
     ["action","attachedPhotoIds","content","placeId","reviewId","type","userId"]);
 
+
+
+
 controller.post("review-event","/events",async (ctx)=> {
     const requestBody : BodyType = ctx.request.body;
     
     if(!checkP(requestBody))
         throw new ErrorObject(ErrorType.Request,"/events",400,`bad request body : ${JSON.stringify(requestBody)}`);
     
-
-
     if(requestBody.action == "ADD") {
         await addReviewHandle(ctx);
         ctx.status = 200;

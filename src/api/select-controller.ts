@@ -25,7 +25,7 @@ const selectUserPointHandle = async (ctx : ExtendContext)=> {
         await conn.commit();
     }catch(e) {
         conn.rollback();
-        throw e;
+        throw new ErrorObject(ErrorType.DB,"/point/user",500,JSON.stringify(e));
     }
 
     const res = await selectUserPointService(ctx);
