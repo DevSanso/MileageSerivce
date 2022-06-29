@@ -5,36 +5,33 @@ import {ExtendContext} from '../utils/extend/koa/context';
 import getUserPointService from '../services/get_user_point';
 import selectReviewPointService from '../services/db/select_review_point';
 
-import {UserRequestBody,ReviewRequestBody} from './body/select';
-import {checkProps} from '../utils/json/check_props';
 import {ErrorObject,ErrorType} from '../middleware/type/error-object';
 
 
 const controller = new Router<any,ExtendContext>();
 
 const selectUserPointHandle = async (ctx : ExtendContext)=> {
-    const body = ctx.request.body as UserRequestBody;
-    if(!checkProps<UserRequestBody>(body,["userId"])) 
-        throw new ErrorObject(ErrorType.Request,"/point/user",400,`bad request body : ${JSON.stringify(body)}`);
+    const userIdQuery = ctx.query.userId as string;
+    if(typeof userIdQuery !== "string") 
+        throw new ErrorObject(ErrorType.Request,"/point/user",400,`not exist or miss match type userId query : url => ${ctx.url}`);
     
-    const res = getUserPointService(ctx,body.userId);
+    const res = getUserPointService(ctx,userIdQuery);
 
     if(res == null) 
-        throw new ErrorObject(ErrorType.Request,"/point/user",400,`not exist user data : ${body.userId}`);
+        throw new ErrorObject(ErrorType.Request,"/point/user",400,`not exist user data : ${userIdQuery}`);
     
     ctx.status = 200;
     ctx.body = JSON.stringify(res);
   
 };
 
-const selectPointHandle = async (ctx : ExtendContext)=> {
-    const body = ctx.request.body as ReviewRequestBody;
+const selectReviewPointHandle = async (ctx : ExtendContext)=> {
+    const reviewQuery = ctx.query.reviewId as string;
 
-    if(!checkProps<ReviewRequestBody>(body,["reviewId"])) 
-        throw new ErrorObject(ErrorType.Request,"/point/user",400,`bad request body : ${JSON.stringify(body)}`);
+    if(typeof reviewQuery !== "string") 
+        throw new ErrorObject(ErrorType.Request,"/point/review",400,`not exist or miss match type  reviewIdQuery query : url => ${ctx.url}`);
     
-
-    const point = await selectReviewPointService(ctx,body.reviewId);
+    const point = await selectReviewPointService(ctx,reviewQuery);
     const responseBody = {
         point : point
     };
@@ -45,7 +42,7 @@ const selectPointHandle = async (ctx : ExtendContext)=> {
 
 
 
-controller.post("select-user-point","/point/user",selectUserPointHandle);
-controller.post("select-point","/point/review",selectPointHandle) ;
+controller.get("select-user-point","/point/user",selectUserPointHandle);
+controller.get("select-review-point","/point/review",selectReviewPointHandle) ;
 export default controller;
 
