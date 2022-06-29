@@ -13,13 +13,23 @@ import {ErrorObject,ErrorType} from '../middleware/type/error-object';
 
 const controller = new Router();
 
-controller.post("select-user-point","/point/user",async (ctx)=> {
+const selectUserPointHandle = async (ctx : Router.IRouterContext)=> {
     const body = ctx.request.body as UserRequestBody;
     if(!checkProps<UserRequestBody>(body,["userId"])) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`bad request body : ${JSON.stringify(body)}`);
-    
+
     const convertCtx = convertCtxType(ctx);
-    await updateUserPointService(convertCtx);
+    const conn = await convertCtx.dbPoolConn;
+    
+    try {
+        await conn.beginTransaction();
+        await updateUserPointService(convertCtx);
+        await conn.commit();
+    }catch(e) {
+        conn.rollback();
+        throw e;
+    }
+
     const res = await selectUserPointService(convertCtx);
 
     if(res == null) 
@@ -28,22 +38,28 @@ controller.post("select-user-point","/point/user",async (ctx)=> {
     ctx.status = 200;
     ctx.body = JSON.stringify(res);
   
-});
+};
 
-controller.post("select-point","/point/review",async (ctx)=> {
+const selectPointHandle = async (ctx : Router.IRouterContext)=> {
     const body = ctx.request.body as ReviewRequestBody;
 
     if(!checkProps<ReviewRequestBody>(body,["reviewId"])) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`bad request body : ${JSON.stringify(body)}`);
     
     const convertCtx = convertCtxType(ctx);
+
     const point = await selectReviewPointService(convertCtx);
     const responseBody = {
         point : point
     };
     ctx.status = 200;
     ctx.body = JSON.stringify(responseBody);
-}) ;
+};
 
+
+
+
+controller.post("select-user-point","/point/user",selectUserPointHandle);
+controller.post("select-point","/point/review",selectPointHandle) ;
 export default controller;
 

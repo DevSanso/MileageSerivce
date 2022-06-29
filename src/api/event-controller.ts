@@ -31,11 +31,18 @@ const afterTreatment = async (ctx : Context) => {
 }
 
 const addReviewHandle = async (ctx : Context)=> {
-    await createReviewService(ctx);
-    const exist = await selectUserPointService(ctx);
-    if (exist == null)await createUserPointService(ctx); 
-    await updateReviewPointFlagService(ctx);
-
+    const conn = await ctx.dbPoolConn;
+    conn.beginTransaction();
+    try {
+        await createReviewService(ctx);
+        const exist = await selectUserPointService(ctx);
+        if (exist == null)await createUserPointService(ctx); 
+        await updateReviewPointFlagService(ctx);
+        await conn.commit();
+    }catch(e) {
+        conn.rollback();
+        throw e;
+    }
     afterTreatment(ctx);
 }
 
