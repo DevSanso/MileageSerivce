@@ -15,7 +15,7 @@ const selectUserPointHandle = async (ctx : ExtendContext)=> {
     if(typeof userIdQuery !== "string") 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`not exist or miss match type userId query : url => ${ctx.url}`);
     
-    const res = getUserPointService(ctx,userIdQuery);
+    const res = await getUserPointService(ctx,userIdQuery);
 
     if(res == null) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`not exist user data : ${userIdQuery}`);
