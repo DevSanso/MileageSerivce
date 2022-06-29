@@ -28,11 +28,13 @@ const middleware  = async (ctx : Koa.Context,next : Koa.Next) => {
         await next();
     }catch(e) {
         const err = castErrorObject(e);
+        ctx.status = 500;
+        ctx.body = "system error";
         if(err.type == ErrorType.Request) {
             ctx.status = err.code;
             ctx.body = err.message;
         }
-
+        
     }
 };
 
