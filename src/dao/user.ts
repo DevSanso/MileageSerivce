@@ -3,10 +3,10 @@ import mysql,{RowDataPacket,FieldPacket} from 'mysql2/promise';
 import transUserPoint from '../dtfp/user_point';
 import UserPoint from '../models/user_point';
 
-const updateUserPointQuery = (userId : string) => `update_user_point_proc(${userId});`;
+const updateUserPointQuery = (userId : string) => `CALL update_user_point_proc("${userId}");`;
 const selectUserPointQuery = (userId : string) => 
-`SELECT point_score FROM user_point WHERE user_id=${userId} LIMIT 1;`;
-const createUserPointQuery = (userId : string) => `INSERT INTO user_point VALUES(${userId},0);`;
+`SELECT point_score FROM user_point WHERE user_id="${userId}" LIMIT 1;`;
+const createUserPointQuery = (userId : string) => `INSERT INTO user_point VALUES("${userId}",0);`;
 
 
 
