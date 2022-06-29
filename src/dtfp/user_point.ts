@@ -8,7 +8,7 @@ type DTO = {
 const transDaoToModel = (row : RowDataPacket) : UserPoint => {
     const dto = row as DTO;
     return {
-        score : dto.point_score
+        point : dto.point_score
     }; 
 };
 
