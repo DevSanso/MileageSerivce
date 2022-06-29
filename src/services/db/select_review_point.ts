@@ -1,12 +1,10 @@
-import Koa from 'koa';
-
-import {ReviewRequestBody} from '../../api/body/select';
+import {ExtendContext} from '../../utils/extend/koa/context';
 import ReviewPointFlag from '../../models/review_point_flag';
 
 
 
 
-const selectReviewPointService = async (ctx : Koa.Context,reviewId : string) => {
+const selectReviewPointService = async (ctx : ExtendContext,reviewId : string) => {
     const dao = await ctx.daoProvider.review();
     let res = await dao.selectReviewPointFlag(reviewId);
     

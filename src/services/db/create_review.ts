@@ -1,7 +1,6 @@
-import Koa from 'koa';
+import {ExtendContext} from '../../utils/extend/koa/context';
 
 import RequestBody from '../../api/body/event';
-import LogDao from '../../dao/log';
 import ReviewDao from '../../dao/review';
 
 
@@ -14,7 +13,7 @@ const insertImages = async(body : ServiceArgsType, dao : ReviewDao) => {
         await dao.insertReviewContent(body.reviewId,body.attachedPhotoIds[i]);
 };
 
-const createReviewService = async (ctx : Koa.Context,args : ServiceArgsType) => {
+const createReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
 
     const dao = await ctx.daoProvider.review();
     

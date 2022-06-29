@@ -1,15 +1,9 @@
-import Koa from 'koa';
-
-import RequestBody from '../../api/body/event';
-
-
-import UserDao from '../../dao/user';
+import {ExtendContext} from '../../utils/extend/koa/context';
 
 
 
 
-
-const updateDbUserPointService = async (ctx : Koa.Context,userId : string) => {
+const updateDbUserPointService = async (ctx : ExtendContext,userId : string) => {
     const dao = await ctx.daoProvider.user();
     await dao.updateUserPoint(userId);
 }

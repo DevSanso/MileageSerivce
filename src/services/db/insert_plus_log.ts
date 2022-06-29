@@ -1,4 +1,4 @@
-import Koa from 'koa';
+import {ExtendContext} from '../../utils/extend/koa/context';
 
 import ReviewPointFlag from '../../models/review_point_flag'
 
@@ -7,7 +7,7 @@ import ReviewPointFlag from '../../models/review_point_flag'
 
 
 
-const  insertPointPlusLogService = async (ctx : Koa.Context,reviewId : string,flags : ReviewPointFlag) => {
+const  insertPointPlusLogService = async (ctx : ExtendContext,reviewId : string,flags : ReviewPointFlag) => {
     const dao =  await ctx.daoProvider.log();
     dao.insertPushPointIog(reviewId,flags.isTextWrite,flags.isUpdateImage,flags.isFirstReview);
 }

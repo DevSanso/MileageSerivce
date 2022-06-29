@@ -1,10 +1,7 @@
-import Koa from 'koa';
-
-import RequestBody from '../../api/body/event';
-import ReviewDao from '../../dao/review';
+import {ExtendContext} from '../../utils/extend/koa/context';
 
 
-const updateReviewPointFlagService = async (ctx : Koa.Context,reviewId : string,placeId : string) => {
+const updateReviewPointFlagService = async (ctx : ExtendContext,reviewId : string,placeId : string) => {
     const dao = await ctx.daoProvider.review() ;
     await dao.updateReviewPointFlag(reviewId,placeId);
 

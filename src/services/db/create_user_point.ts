@@ -1,13 +1,7 @@
-import Koa from 'koa';
-
-import {UserRequestBody} from '../../api/body/select';
+import {ExtendContext} from '../../utils/extend/koa/context';
 
 
-import UserDao from '../../dao/user';
-
-
-
-const createUserPointService = async (ctx : Koa.Context,userId : string) => {
+const createUserPointService = async (ctx : ExtendContext,userId : string) => {
     const dao = await ctx.daoProvider.user();
     await dao.createUserPoint(userId);
 }
