@@ -9,10 +9,9 @@ import UserDao from '../../dao/user';
 
 
 
-const updateDbUserPointService = async (ctx : Koa.Context) => {
-    const body = ctx.request.body as RequestBody;
+const updateDbUserPointService = async (ctx : Koa.Context,userId : string) => {
     const dao = await ctx.daoProvider.user();
-    await dao.updateUserPoint(body.userId);
+    await dao.updateUserPoint(userId);
 }
 
 export default updateDbUserPointService;

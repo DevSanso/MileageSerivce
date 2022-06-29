@@ -4,10 +4,9 @@ import RequestBody from '../../api/body/event';
 import ReviewDao from '../../dao/review';
 
 
-const updateReviewPointFlagService = async (ctx : Koa.Context) => {
-    const body = ctx.request.body as RequestBody;
+const updateReviewPointFlagService = async (ctx : Koa.Context,reviewId : string,placeId : string) => {
     const dao = await ctx.daoProvider.review() ;
-    await dao.updateReviewPointFlag(body.reviewId,body.placeId);
+    await dao.updateReviewPointFlag(reviewId,placeId);
 
 }
 

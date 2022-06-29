@@ -28,14 +28,14 @@ const afterTreatment = async (ctx : Context) => {
         await insertPointPlusLogService(ctx,body.reviewId,flag);
 }
 
-const addReviewHandle = async (ctx : Context)=> {
+const addReviewHandle = async (ctx : Context,body : BodyType)=> {
     const conn = await ctx.dbPoolConn;
     conn.beginTransaction();
     try {
-        await createReviewService(ctx);
-        const exist = await selectUserPointService(ctx);
-        if (exist == null)await createUserPointService(ctx); 
-        await updateReviewPointFlagService(ctx);
+        await createReviewService(ctx,body);
+        const exist = await selectUserPointService(ctx,body.userId);
+        if (exist == null)await createUserPointService(ctx,body.userId); 
+        await updateReviewPointFlagService(ctx,body.reviewId,body.placeId);
         await conn.commit();
     }catch(e) {
         conn.rollback();
@@ -59,7 +59,7 @@ controller.post("review-event","/events",async (ctx)=> {
         throw new ErrorObject(ErrorType.Request,"/events",400,`bad request body : ${JSON.stringify(requestBody)}`);
     
     if(requestBody.action == "ADD") {
-        await addReviewHandle(ctx);
+        await addReviewHandle(ctx,requestBody);
         ctx.status = 200;
         ctx.body = "Ok";
     }

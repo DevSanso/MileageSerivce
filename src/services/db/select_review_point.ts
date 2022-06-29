@@ -6,10 +6,9 @@ import ReviewPointFlag from '../../models/review_point_flag';
 
 
 
-const selectReviewPointService = async (ctx : Koa.Context) => {
-    const body = ctx.request.body as ReviewRequestBody;
+const selectReviewPointService = async (ctx : Koa.Context,reviewId : string) => {
     const dao = await ctx.daoProvider.review();
-    let res = await dao.selectReviewPointFlag(body.reviewId);
+    let res = await dao.selectReviewPointFlag(reviewId);
     
     if (res == null)return null;
 

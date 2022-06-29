@@ -7,10 +7,9 @@ import UserDao from '../../dao/user';
 
 
 
-const createUserPointService = async (ctx : Koa.Context) => {
-    const body = ctx.request.body as Pick<UserRequestBody,"userId">;
+const createUserPointService = async (ctx : Koa.Context,userId : string) => {
     const dao = await ctx.daoProvider.user();
-    await dao.createUserPoint(body.userId);
+    await dao.createUserPoint(userId);
 }
 
 export default createUserPointService;

@@ -21,14 +21,14 @@ const selectUserPointHandle = async (ctx : ExtendContext)=> {
     
     try {
         await conn.beginTransaction();
-        await updateUserPointService(ctx);
+        await updateUserPointService(ctx,body.userId);
         await conn.commit();
     }catch(e) {
         conn.rollback();
         throw new ErrorObject(ErrorType.DB,"/point/user",500,JSON.stringify(e));
     }
 
-    const res = await selectUserPointService(ctx);
+    const res = await selectUserPointService(ctx,body.userId);
 
     if(res == null) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`not exist user data : ${body.userId}`);
@@ -45,7 +45,7 @@ const selectPointHandle = async (ctx : ExtendContext)=> {
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`bad request body : ${JSON.stringify(body)}`);
     
 
-    const point = await selectReviewPointService(ctx);
+    const point = await selectReviewPointService(ctx,body.reviewId);
     const responseBody = {
         point : point
     };

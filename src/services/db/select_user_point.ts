@@ -7,10 +7,9 @@ import UserPoint from '../../models/user_point';
 
 
 
-const selectUserPointService = async (ctx : Koa.Context) : Promise<UserPoint | null>=> {
-    const body = ctx.request.body as Pick<UserRequestBody,"userId">;
+const selectUserPointService = async (ctx : Koa.Context,userId : string) : Promise<UserPoint | null>=> {
     const dao = await ctx.daoProvider.user() ;
-    let res = await dao.selectUserPoint(body.userId);
+    let res = await dao.selectUserPoint(userId);
     return res;
 }
 
