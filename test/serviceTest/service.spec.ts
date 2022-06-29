@@ -54,15 +54,16 @@ describe("서비스 test",()=> {
         });
 
         it("빈 콘텐츠, 첫번째 유저랑 같은 ,첫번째가 아닌 리뷰 생성",async()=>{
-            const other : RequestBody= Object.assign(firstBody);
+            const other : RequestBody= Object.assign({},firstBody);
             other.content = null;
             other.reviewId = uuid();
             other.attachedPhotoIds = [uuid()];
             
             await addReviewService(onlyDaoCtx,other);
+            expect(firstBody.userId).to.equal(other.userId);
         });
         it("빈 콘텐츠, 빈 이미지, 첫번째 유저랑 다른 ,첫번째가 아닌 리뷰 생성",async()=>{
-            const other : RequestBody= Object.assign(firstBody);
+            const other : RequestBody= Object.assign({},firstBody);
             other.content = null;
             other.reviewId = uuid();
             other.userId = uuid();
