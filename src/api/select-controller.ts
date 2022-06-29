@@ -1,36 +1,34 @@
 import Router from 'koa-router';
 
+import {ExtendContext} from '../utils/extend/koa/context';
 
 import selectUserPointService from '../services/db/select_user_point';
 import updateUserPointService from '../services/db/update_user_point';
 import selectReviewPointService from '../services/db/select_review_point';
 
 import {UserRequestBody,ReviewRequestBody} from './body/select';
-import {convertCtxType} from '../utils/koa/convert_ctx_type';
 import {checkProps} from '../utils/json/check_props';
 import {ErrorObject,ErrorType} from '../middleware/type/error-object';
 
 
-const controller = new Router();
+const controller = new Router<any,ExtendContext>();
 
-const selectUserPointHandle = async (ctx : Router.IRouterContext)=> {
+const selectUserPointHandle = async (ctx : ExtendContext)=> {
     const body = ctx.request.body as UserRequestBody;
     if(!checkProps<UserRequestBody>(body,["userId"])) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`bad request body : ${JSON.stringify(body)}`);
-
-    const convertCtx = convertCtxType(ctx);
-    const conn = await convertCtx.dbPoolConn;
+    const conn = await ctx.dbPoolConn;
     
     try {
         await conn.beginTransaction();
-        await updateUserPointService(convertCtx);
+        await updateUserPointService(ctx);
         await conn.commit();
     }catch(e) {
         conn.rollback();
         throw e;
     }
 
-    const res = await selectUserPointService(convertCtx);
+    const res = await selectUserPointService(ctx);
 
     if(res == null) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`not exist user data : ${body.userId}`);
@@ -40,15 +38,14 @@ const selectUserPointHandle = async (ctx : Router.IRouterContext)=> {
   
 };
 
-const selectPointHandle = async (ctx : Router.IRouterContext)=> {
+const selectPointHandle = async (ctx : ExtendContext)=> {
     const body = ctx.request.body as ReviewRequestBody;
 
     if(!checkProps<ReviewRequestBody>(body,["reviewId"])) 
         throw new ErrorObject(ErrorType.Request,"/point/user",400,`bad request body : ${JSON.stringify(body)}`);
     
-    const convertCtx = convertCtxType(ctx);
 
-    const point = await selectReviewPointService(convertCtx);
+    const point = await selectReviewPointService(ctx);
     const responseBody = {
         point : point
     };

@@ -3,7 +3,7 @@ import Koa from 'koa';
 
 
 
-import '../utils/extend/koa/context_dbconn';
+
 
 
 

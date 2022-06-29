@@ -5,10 +5,6 @@ import UserDao from '../dao/user';
 import LogDao from '../dao/log';
 
 
-import '../utils/extend/koa/context_dbconn';
-import '../utils/extend/koa/context_dao';
-
-
 
 const middleware  =async (ctx : Koa.Context,next : Koa.Next) => {
     ctx.daoProvider = {

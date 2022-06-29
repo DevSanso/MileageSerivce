@@ -3,8 +3,6 @@ import Koa from 'koa';
 
 import * as config from '../config/db';
 
-import '../utils/extend/koa/context_dbconn';
-
 
 const pool = mysql.createPool({
     host : config.host,
@@ -16,7 +14,6 @@ const pool = mysql.createPool({
 
 const middleware  = async (ctx : Koa.Context,next : Koa.Next) => {
     ctx.dbPoolConn  = pool.getConnection();
-
     await next();
 };
 

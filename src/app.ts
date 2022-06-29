@@ -2,8 +2,10 @@ import Koa from 'koa';
 import controllers from './api';
 import middleware from './middleware';
 
+import {ExtendContext} from './utils/extend/koa/context';
 
-const app = new Koa();
+
+const app = new Koa<ExtendContext>();
 
 app.use(middleware.bodyParser);
 app.use(middleware.db);
