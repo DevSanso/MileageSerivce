@@ -69,7 +69,7 @@ describe("ReviewDao Object Test",()=>{
 
         await dao.updateReviewPointFlag(reviewId,placeId);
         let reviewFlag = await dao.selectReviewPointFlag(reviewId) as ReviewPointFlag;
-        
+
         expect(reviewFlag.isFirstReview).to.equal(true);
         const secondReviewId = uuid();
         const secondUserId = uuid();
@@ -90,7 +90,7 @@ describe("ReviewDao Object Test",()=>{
             userId : uuid(),
             content : "hi"
         });
-
+        await dao.createReviewPointFlag(otherReviewId);
         await dao.updateReviewPointFlag(otherReviewId,otherPlaceId);
         reviewFlag = await dao.selectReviewPointFlag(otherReviewId) as ReviewPointFlag;
         expect(reviewFlag.isFirstReview).to.equal(true);

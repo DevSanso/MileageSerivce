@@ -26,6 +26,8 @@ const addReview = async(dao : ReviewDao,userId : string) => {
     expect(review.comment).to.equal(comment);
     expect(review.userId).to.equal(userId);
     expect(review.plcaeId).to.equal(placeId);
+    await dao.createReviewPointFlag(reviewId);
+    await dao.updateReviewPointFlag(reviewId,placeId);
 }
 
 
@@ -50,9 +52,11 @@ describe("userDao Test",()=> {
 
    it("update user point test",async() =>{
         await userDao.updateUserPoint(userUUID);
-        const userPoint = userDao.selectUserPoint(userUUID);
-        expect(userPoint).to.equal(2);
+        const userPoint = await userDao.selectUserPoint(userUUID);
+        expect(userPoint?.score).to.equal(2);
    });
-   conn.then(value => deleteAllData(value));
 
+   it("모든 테이블 튜플 삭제 ",async() => {
+    await deleteAllData(await conn);
+    });
 });
