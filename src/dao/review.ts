@@ -11,7 +11,7 @@ import transReviewContent from '../dtfp/review_content';
 import transReview from '../dtfp/review';
 
 
-type InsertParam = Omit<Body,"action" | "type" | "attachedPhotoIds" | "content"> & {content : string | null};
+type InsertParam = Omit<Body,"action" | "type" | "attachedPhotoIds">;
 
 const selectReviewPointFlagQuery = (reviewId : string) => 
 "SELECT is_text_write, is_update_image,is_first_review " +

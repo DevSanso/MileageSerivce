@@ -12,6 +12,7 @@ import {ErrorObject,ErrorType} from '../middleware/type/error-object';
 const controller = new Router<any,ExtendContext>();
 
 const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
+    body.content = body.content == "" ? null : body.content;
     try {
         await addReviewService(ctx,body);
     }catch(e) {
