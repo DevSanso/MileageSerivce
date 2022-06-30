@@ -17,3 +17,17 @@ export const makeRandomEventBody = (comment : string) : EventBodyType=> {
         placeId : placeId
     };
 };
+type Action = "ADD" | "MOD"|  "DELETE";
+export const makeBasicRandomEventBody = (action : Action) : Omit<EventBodyType,"attachedPhotoIds" | "content"> => {
+    const reviewId = uuid();
+    const placeId = uuid();
+    const userId = uuid();
+    
+    return {
+        action : action,
+        type : "REVIEW",
+        reviewId : reviewId,
+        userId : userId,
+        placeId : placeId
+    }
+}
