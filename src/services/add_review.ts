@@ -18,7 +18,6 @@ const afterTreatment = async (ctx : ExtendContext,args : ServiceArgsType) => {
     const flag = await selectReviewPointFlagService(ctx,args.reviewId) as ReviewPointFlag;
     if(flag.isFirstReview || flag.isTextWrite || flag.isUpdateImage) 
         await insertPointPlusLogService(ctx,args.reviewId,flag);
-    await updateUserPointService(ctx,args.userId);
 }
 
 const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
