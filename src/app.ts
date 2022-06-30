@@ -14,6 +14,6 @@ app.use(middleware.daoProvider);
 app.use(middleware.error);
 
 app.use(controllers.event.routes());
-app.use(controllers.select.routes());
+app.use(controllers.point.routes());
 
 export default app;

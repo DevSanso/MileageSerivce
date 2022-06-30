@@ -1,8 +1,8 @@
 import eventController from './api/event-controller';
-import selectController from './api/select-controller';
+import pointController from './api/point-controller';
 
 
 export default {
     event : eventController,
-    select : selectController
+    point : pointController
 }
