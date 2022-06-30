@@ -4,14 +4,15 @@ import {uuid} from 'uuidv4';
 
 
 
-import andAndModReviewService from '../../src/services/add_and_mod_review';
+import addReviewService from '../../src/services/add_review';
+import modReviewService from '../../src/services/mod_review';
 import getUserPointService from '../../src/services/get_user_point';
 import selectAllPointPlusLogService from '../../src/services/db/select_all_point_plus_log';
 
 import {onlyDaoContext} from '../util/mock/context';
 import dbPoolGen from "../util/db";
 import deleteAllData from '../util/deleteAll';
-import {makeRandomEventBody} from '../util/mock/body';
+import {makeRandomEventBody, makeBasicRandomEventBody } from '../util/mock/body';
 import Review from '../../src/models/review';
 import ReviewPointFlag from '../../src/models/review_point_flag';
 import UserPoint from '../../src/models/user_point';
@@ -28,7 +29,7 @@ describe("서비스 test",()=> {
 
     describe("addReview 서비스 Test",async()=>{
         it("리뷰 생성",async()=>{
-            await andAndModReviewService(onlyDaoCtx,firstBody);
+            await addReviewService(onlyDaoCtx,firstBody);
         });
         it("생성된 리뷰 튜플 값 확인",async() => {
             const res = await onlyDaoCtx.daoProvider.review().selectReview(firstBody.reviewId) as Review;
@@ -36,6 +37,9 @@ describe("서비스 test",()=> {
             expect(res.plcaeId).to.equal(firstBody.placeId);
             expect(res.userId).to.equal(firstBody.userId);
             expect(res.comment).to.equal(firstBody.content);
+            const resImage = await onlyDaoCtx.daoProvider.review().selectReviewContent(firstBody.reviewId);
+            expect(resImage).to.not.equal(null);
+            expect(resImage?.length).to.equal(2);
         });
         it("포인터 증감 로그 확인",async() => {
             const arr = await selectAllPointPlusLogService(onlyDaoCtx);
@@ -55,21 +59,21 @@ describe("서비스 test",()=> {
 
         it("빈 콘텐츠, 첫번째 유저랑 같은 ,첫번째가 아닌 리뷰 생성",async()=>{
             const other : RequestBody= Object.assign({},firstBody);
-            other.content = undefined;
+            other.content = null;
             other.reviewId = uuid();
             other.attachedPhotoIds = [uuid()];
             
-            await andAndModReviewService(onlyDaoCtx,other);
+            await addReviewService(onlyDaoCtx,other);
             expect(firstBody.userId).to.equal(other.userId);
         });
         it("빈 콘텐츠, 빈 이미지, 첫번째 유저랑 다른 ,첫번째가 아닌 리뷰 생성",async()=>{
             const other : RequestBody= Object.assign({},firstBody);
-            other.content = undefined;
+            other.content = null;
             other.reviewId = uuid();
             other.userId = uuid();
             other.attachedPhotoIds = [];
             
-            await andAndModReviewService(onlyDaoCtx,other);
+            await addReviewService(onlyDaoCtx,other);
         });
 
 
@@ -90,6 +94,26 @@ describe("서비스 test",()=> {
             const res = await getUserPointService(onlyDaoCtx,firstBody.userId) as UserPoint;
             expect(res).to.not.equal(null);
             expect(res.point).to.equal(4);
+        });
+
+        it("mod review 서비스 Test",async() => {
+           const basic = makeBasicRandomEventBody("MOD") as RequestBody;
+           basic.reviewId = firstBody.reviewId;
+           basic.content = "mod content value";
+           await modReviewService(onlyDaoCtx,basic);
+
+           let res = await onlyDaoCtx.daoProvider.review().selectReview(firstBody.reviewId) as Review;
+           expect(res.comment).to.equal(basic.content);
+
+           basic.content = "mod second content value";
+           basic.attachedPhotoIds = null;
+
+           await modReviewService(onlyDaoCtx,basic);
+
+           res = await onlyDaoCtx.daoProvider.review().selectReview(firstBody.reviewId) as Review;
+           expect(res.comment).to.equal(basic.content);
+           const resImage = await onlyDaoCtx.daoProvider.review().selectReviewContent(firstBody.reviewId);
+           expect(resImage).to.equal(null);
         });
 
         it("데이터베이스 튜플 전체 삭제",async() => {

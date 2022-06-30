@@ -50,20 +50,29 @@ describe("ReviewDao Object Test",()=>{
         }
     });
     it("dao 리뷰 포인트 플래그 조회 test",async() => {
+        
+        await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
         const reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
-        expect(reviewFlag.isTextWrite).to.equal(false);
-        expect(reviewFlag.isFirstReview).to.equal(false);
-        expect(reviewFlag.isUpdateImage).to.equal(false);
+        expect(reviewFlag.isTextWrite).to.equal(true);
+        expect(reviewFlag.isFirstReview).to.equal(true);
+        expect(reviewFlag.isUpdateImage).to.equal(true);
     });
 
     it("dao 리뷰 내용 변경 및  플래그 업데이트 후 조회 test",async() => {
         await dao.updateReviewComment(reviewId,"hi");
         const review = await dao.selectReview(reviewId) as Review;
         expect(review.comment).to.equal("hi");
+
         await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
         let reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
         expect(reviewFlag.isTextWrite).to.equal(true);
+
         await dao.updateReviewComment(reviewId,null);
+        await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
+        reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
+        expect(reviewFlag.isTextWrite).to.equal(false);
+
+        await dao.deleteImages(reviewId);
         await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
         reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
         expect(reviewFlag.isTextWrite).to.equal(false);
