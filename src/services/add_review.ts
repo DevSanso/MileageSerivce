@@ -14,6 +14,7 @@ import insertPointPlusLogService from './db/insert_plus_log';
 import selectReviewService from './db/select_review';
 import updateReviewCommentService from './db/update_review_comment';
 import insertImagesService from './db/insert_images';
+import { ErrorObject, ErrorType } from '../middleware/type/error-object';
 
 
 type ServiceArgsType = Omit<RequestBody,"action" | "type" >;
@@ -34,13 +35,11 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
     const conn = await ctx.dbPoolConn;
    
     try {
-        const existReview = selectReviewService(ctx,args.reviewId);
-        const existUserPoint = selectUserPointService(ctx,args.userId);
 
-        if((await existReview) == null) 
-            await createReviewService(ctx,args);
-        if((await existUserPoint) == null)
-            await createUserPointService(ctx,args.userId); 
+        await createReviewService(ctx,args);
+        await createUserPointService(ctx,args.userId); 
+
+            
         
 
         await conn.beginTransaction();
@@ -63,8 +62,10 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
         await afterTreatment(ctx,args);
         
         await conn.commit();
-    }catch(e) {
+    }catch(e : any) {
         conn.rollback();
+        if(e["errno"] = 1062)
+            throw new ErrorObject(ErrorType.Request,"/events",400,"already exist review");
         throw e;
     }
 };

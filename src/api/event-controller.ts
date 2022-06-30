@@ -18,6 +18,7 @@ const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
     try {
         await addReviewService(ctx,body);
     }catch(e) {
+        if(e instanceof ErrorObject)throw e;
         throw new ErrorObject(ErrorType.DB,"/events",500,JSON.stringify(e));
     }
 };
@@ -40,26 +41,48 @@ const deleteTypeReviewHandle = async (ctx : ExtendContext,body : BodyType) => {
     }
 };
 
-const checkP = (body : any) => checkProps<BodyType>(body,
-    ["action","placeId","reviewId","type","userId"]);
+const checkAddAndModP = (body : any) => {
+    const chk = !checkProps<BodyType>(body,
+        ["placeId","reviewId","type","userId"]);
+
+    if(chk)throw new ErrorObject(ErrorType.Request,
+        "/events",400,
+        `bad request body : ${JSON.stringify(body)}`);
+}
+
+const checkDeleteP = (body : any) => {
+    const chk = !checkProps<BodyType>(body,["reviewId","type"]);
+
+    if(chk)throw new ErrorObject(ErrorType.Request,
+        "/events",400,
+        `bad request body : ${JSON.stringify(body)}`);
+}
 
 controller.post("review-event","/events",async (ctx)=> {
     const requestBody : BodyType = ctx.request.body;
-    
-    if(!checkP(requestBody))
-        throw new ErrorObject(ErrorType.Request,"/events",400,`bad request body : ${JSON.stringify(requestBody)}`);
+
+    if(!checkProps<BodyType>(requestBody,["action"]))
+        throw new ErrorObject(ErrorType.Request,
+            "/events",400,
+            `not exist action prop`);
     
     if(requestBody.action == "ADD") {
+        checkAddAndModP(requestBody);
+
         await addTypeReviewHandle(ctx,requestBody);
         ctx.status = 201;
         ctx.body = "Ok";
     }
     else if(requestBody.action == "MOD") {
+        checkAddAndModP(requestBody);
+
         await modTypeReviewHandle(ctx,requestBody);
         ctx.status = 200;
         ctx.body = "Ok";
     }
     else if(requestBody.action == "DELETE") {
+        checkDeleteP(requestBody);
+        
         await deleteTypeReviewHandle(ctx,requestBody);
         ctx.status = 204;
         ctx.body = "Ok";
@@ -67,7 +90,7 @@ controller.post("review-event","/events",async (ctx)=> {
     else {
         throw new ErrorObject(ErrorType.Request,"/events",400,`not allow this action : ${requestBody.action}`);
     }
-}) ;
+});
 
 
 export default controller;
