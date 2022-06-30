@@ -10,7 +10,7 @@ const castErrorObject = (e : unknown) : ErrorObject => {
     return new ErrorObject(ErrorType.Unknown,"unknown",500,JSON.stringify(e));
 };
 
-const print = (e : ErrorObject) => {
+const print = async (e : ErrorObject) => {
     const t = (() => {
         if (e.type == ErrorType.Request)return "User Reuquest";
         else if(e.type == ErrorType.System)return "System";
@@ -28,6 +28,7 @@ const middleware  = async (ctx : Koa.Context,next : Koa.Next) => {
         await next();
     }catch(e) {
         const err = castErrorObject(e);
+        print(err);
         ctx.status = err.code;
         let message = "";
         if(err.type == ErrorType.Request) {
