@@ -14,8 +14,9 @@ import transReview from '../dtfp/review';
 type InsertParam = Omit<Body,"action" | "type" | "attachedPhotoIds">;
 
 
-
- const selectReviewContentQuery= (reviewId : string) =>  
+const deleteImageQuery = (reviewId : string) => 
+`DELETE FROM review_content WHERE review_id = "${reviewId}";`; 
+const selectReviewContentQuery= (reviewId : string) =>  
 `SELECT image_id FROM review_content WHERE review_id="${reviewId}";`;
 
 const selectReviewQuery = (reviewId : string) => 
@@ -28,10 +29,6 @@ const insertReviewQuery = (review_id : string,user_id : string,place_id : string
 
 const updateReviewCommentQuery = (review_id : string,comment : string | null) =>
 `UPDATE review SET comment = ${comment} WHERE review_id="${review_id}";`;
-
-const deleteRviewContentQuery =(review_id : string,imgIds : Array<string>) => {
-
-};
 
 const insertReviewCotentQuery = (review_id : string,image_id : string) =>
 `INSERT INTO review_content(review_id,image_id) VALUES("${review_id}","${image_id}");`;
@@ -55,8 +52,7 @@ class ReviewDao {
         const query = selectReviewContentQuery(reviewId);
         const conn = await this.connPromise;
         const [rows,field] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
-
-        if (rows.length = 0)return null;
+        if (rows.length == 0)return null;
         return rows.map(value => transReviewContent(value));
     };
 
@@ -71,6 +67,11 @@ class ReviewDao {
         return null;
     };
 
+    public deleteImages = async (reviewId : string)  => {
+        const query = deleteImageQuery(reviewId);
+        const conn = await this.connPromise;
+        await conn.execute(query);
+    }
 
     public insertReview = async (body : InsertParam) => {
         const conn = await this.connPromise;
@@ -87,6 +88,7 @@ class ReviewDao {
         const conn = await this.connPromise;
         await conn.execute(deleteReivewQuery(reviewId));
     }
+
 }
 
 export default ReviewDao;
