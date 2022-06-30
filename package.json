@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "npx mocha test/list.spec.ts -r ts-node/register --exit",
-    "test-server" : "npx ts-node ./scripts/ts/test_run_server.ts"
+    "test-server": "npx ts-node ./scripts/ts/test_run_server.ts",
+    "build" : "npx tsc --build",
+    "bundle" : "npx esbuild ./dist/server.js --bundle --platform=node  --outfile=./bundle/app.js"
   },
   "repository": {
     "type": "git",
@@ -24,6 +26,7 @@
     "@types/mocha": "^9.1.1",
     "axios": "^0.27.2",
     "chai": "^4.3.6",
+    "esbuild": "^0.14.48",
     "mocha": "^10.0.0",
     "ts-node": "^10.8.1",
     "typescript": "^4.7.4",
