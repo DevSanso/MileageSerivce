@@ -18,7 +18,7 @@ const run = (sqlPath) => {
     cp.execSync(shell(host,port,user,password,database,sqlPath));
 };
 
-run(dbConfig,p("/sql/table.sql"));
-run(dbConfig,p("/sql/index.sql"));
-run(dbConfig,p("/sql/trigger.sql"));
-run(dbConfig,p("/sql/procedure.sql"));
+run(p("/sql/table.sql"));
+run(p("/sql/index.sql"));
+run(p("/sql/trigger.sql"));
+run(p("/sql/procedure.sql"));
