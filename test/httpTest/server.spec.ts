@@ -42,6 +42,13 @@ describe("http 서버 테스트",()=>{
             const dbTuple = onlyDaoCtx.daoProvider.review().selectReview(request.reviewId);
             expect(dbTuple).to.not.equal(null);
         })
+
+        it("/events mod 액션 이미지 수정시 에러 검출 Test",async () => {
+            request.action = "MOD";
+            const res = await axios.post("http://localhost:3000/events",request,{validateStatus : () => true});
+            expect(res.status).to.equal(400);
+
+        })
         it("모든 테이블 튜플 삭제",async() => {
             await deleteAllData(await conn);
         })

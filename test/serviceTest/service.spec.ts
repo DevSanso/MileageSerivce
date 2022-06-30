@@ -4,7 +4,7 @@ import {uuid} from 'uuidv4';
 
 
 
-import addReviewService from '../../src/services/add_review';
+import andAndModReviewService from '../../src/services/add_and_mod_review';
 import getUserPointService from '../../src/services/get_user_point';
 import selectAllPointPlusLogService from '../../src/services/db/select_all_point_plus_log';
 
@@ -28,7 +28,7 @@ describe("서비스 test",()=> {
 
     describe("addReview 서비스 Test",async()=>{
         it("리뷰 생성",async()=>{
-            await addReviewService(onlyDaoCtx,firstBody);
+            await andAndModReviewService(onlyDaoCtx,firstBody);
         });
         it("생성된 리뷰 튜플 값 확인",async() => {
             const res = await onlyDaoCtx.daoProvider.review().selectReview(firstBody.reviewId) as Review;
@@ -59,7 +59,7 @@ describe("서비스 test",()=> {
             other.reviewId = uuid();
             other.attachedPhotoIds = [uuid()];
             
-            await addReviewService(onlyDaoCtx,other);
+            await andAndModReviewService(onlyDaoCtx,other);
             expect(firstBody.userId).to.equal(other.userId);
         });
         it("빈 콘텐츠, 빈 이미지, 첫번째 유저랑 다른 ,첫번째가 아닌 리뷰 생성",async()=>{
@@ -69,7 +69,7 @@ describe("서비스 test",()=> {
             other.userId = uuid();
             other.attachedPhotoIds = [];
             
-            await addReviewService(onlyDaoCtx,other);
+            await andAndModReviewService(onlyDaoCtx,other);
         });
 
 
