@@ -4,6 +4,7 @@ import dbPoolGen from "../util/db";
 import ReviewDao from "../../src/dao/review";
 import {uuid} from 'uuidv4';
 import Review from '../../src/models/review';
+import ReviewFlagDao from '../../src/dao/review_point_flag';
 import ReviewContent from '../../src/models/review_content';
 import ReviewPointFlag from '../../src/models/review_point_flag';
 import deleteAllData from '../util/deleteAll';
@@ -14,6 +15,7 @@ describe("ReviewDao Object Test",()=>{
     const conn =  pool.getConnection();
 
     const dao = new ReviewDao(conn);
+    const daoFlag = new ReviewFlagDao(conn);
     
     const reviewId = uuid();
     const placeId = uuid();
@@ -29,7 +31,7 @@ describe("ReviewDao Object Test",()=>{
             content : comment
         });
         await imageIds.forEach(value => dao.insertReviewContent(reviewId,value));
-        await dao.createReviewPointFlag(reviewId);
+        await daoFlag.createReviewPointFlag(reviewId);
     });
    it("dao 리뷰 조회  test",async() => {
         const review = await dao.selectReview(reviewId) as Review;
@@ -48,7 +50,7 @@ describe("ReviewDao Object Test",()=>{
         }
     });
     it("dao 리뷰 포인트 플래그 조회 test",async() => {
-        const reviewFlag = await dao.selectReviewPointFlag(reviewId) as ReviewPointFlag;
+        const reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
         expect(reviewFlag.isTextWrite).to.equal(false);
         expect(reviewFlag.isFirstReview).to.equal(false);
         expect(reviewFlag.isUpdateImage).to.equal(false);
@@ -64,11 +66,11 @@ describe("ReviewDao Object Test",()=>{
                 userId : user_id,
                 content : comment
             });
-            await dao.createReviewPointFlag(review_id);
+            await daoFlag.createReviewPointFlag(review_id);
         }
 
-        await dao.updateReviewPointFlag(reviewId,placeId);
-        let reviewFlag = await dao.selectReviewPointFlag(reviewId) as ReviewPointFlag;
+        await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
+        let reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
 
         expect(reviewFlag.isFirstReview).to.equal(true);
         const secondReviewId = uuid();
@@ -77,8 +79,8 @@ describe("ReviewDao Object Test",()=>{
         const thirdUserId = uuid();
 
         await createOtherFlag(secondReviewId,secondUserId);
-        await dao.updateReviewPointFlag(secondReviewId,placeId);
-        reviewFlag = await dao.selectReviewPointFlag(secondReviewId) as ReviewPointFlag;
+        await daoFlag.updateReviewPointFlagProc(secondReviewId,placeId);
+        reviewFlag = await daoFlag.selectReviewPointFlag(secondReviewId) as ReviewPointFlag;
         expect(reviewFlag.isFirstReview).to.equal(false);
 
 
@@ -90,16 +92,16 @@ describe("ReviewDao Object Test",()=>{
             userId : uuid(),
             content : "hi"
         });
-        await dao.createReviewPointFlag(otherReviewId);
-        await dao.updateReviewPointFlag(otherReviewId,otherPlaceId);
-        reviewFlag = await dao.selectReviewPointFlag(otherReviewId) as ReviewPointFlag;
+        await daoFlag.createReviewPointFlag(otherReviewId);
+        await daoFlag.updateReviewPointFlagProc(otherReviewId,otherPlaceId);
+        reviewFlag = await daoFlag.selectReviewPointFlag(otherReviewId) as ReviewPointFlag;
         expect(reviewFlag.isFirstReview).to.equal(true);
 
         await dao.deleteReview(reviewId);
 
         await createOtherFlag(thirdReviewId,thirdUserId);
-        await dao.updateReviewPointFlag(thirdReviewId,placeId);
-        reviewFlag = await dao.selectReviewPointFlag(thirdReviewId) as ReviewPointFlag;
+        await daoFlag.updateReviewPointFlagProc(thirdReviewId,placeId);
+        reviewFlag = await daoFlag.selectReviewPointFlag(thirdReviewId) as ReviewPointFlag;
         expect(reviewFlag.isFirstReview).to.equal(true);
     });
 

@@ -4,8 +4,8 @@ export default interface RequestBody {
     type : string,
     action :  string,
     reviewId : string,
-    content : string | null,
-    attachedPhotoIds : Array<string>,
+    content : string | undefined,
+    attachedPhotoIds : Array<string> | undefined,
     userId : string,
     placeId : string
 }

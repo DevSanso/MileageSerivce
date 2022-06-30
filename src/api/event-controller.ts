@@ -12,7 +12,7 @@ import {ErrorObject,ErrorType} from '../middleware/type/error-object';
 const controller = new Router<any,ExtendContext>();
 
 const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
-    body.content = body.content == "" ? null : body.content;
+    body.content = body.content == "" ? undefined : body.content;
     try {
         await addReviewService(ctx,body);
     }catch(e) {
@@ -21,7 +21,7 @@ const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
 }
 
 const checkP = (body : any) => checkProps<BodyType>(body,
-    ["action","attachedPhotoIds","content","placeId","reviewId","type","userId"]);
+    ["action","placeId","reviewId","type","userId"]);
 
 
 controller.post("review-event","/events",async (ctx)=> {

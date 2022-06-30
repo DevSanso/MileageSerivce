@@ -2,6 +2,8 @@ import {expect} from 'chai';
 
 import dbPoolGen from "../util/db";
 import ReviewDao from "../../src/dao/review";
+
+import ReviewFlagDao from '../../src/dao/review_point_flag';
 import UserDao from '../../src/dao/user';
 
 import {uuid} from 'uuidv4';
@@ -9,7 +11,7 @@ import Review from '../../src/models/review';
 
 import deleteAllData from '../util/deleteAll';
 
-const addReview = async(dao : ReviewDao,userId : string) => {
+const addReview = async(dao : ReviewDao,daoFlag : ReviewFlagDao,userId : string) => {
     const reviewId = uuid();
     const placeId = uuid();
 
@@ -21,13 +23,13 @@ const addReview = async(dao : ReviewDao,userId : string) => {
         userId : userId,
         content : comment
     });
-
+    
     const review = await dao.selectReview(reviewId) as Review;
     expect(review.comment).to.equal(comment);
     expect(review.userId).to.equal(userId);
     expect(review.plcaeId).to.equal(placeId);
-    await dao.createReviewPointFlag(reviewId);
-    await dao.updateReviewPointFlag(reviewId,placeId);
+    await daoFlag.createReviewPointFlag(reviewId);
+    await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
 }
 
 
@@ -36,10 +38,11 @@ describe("userDao Object Test",()=> {
     const conn =  pool.getConnection();
 
     const dao = new ReviewDao(conn);
+    const daoFlag = new ReviewFlagDao(conn);
     const userUUID = uuid();
 
     it("리뷰 추가 전처리 test",async() => {
-        await addReview(dao,userUUID);
+        await addReview(dao,daoFlag,userUUID);
    });
    const userDao = new UserDao(conn);
 
