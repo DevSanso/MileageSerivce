@@ -5,7 +5,7 @@ import ReviewPointFlag from '../../models/review_point_flag';
 
 
 const selectReviewPointService = async (ctx : ExtendContext,reviewId : string) => {
-    const dao = await ctx.daoProvider.review();
+    const dao = await ctx.daoProvider.reviewPointFlag();
     let res = await dao.selectReviewPointFlag(reviewId);
     
     if (res == null)return null;
