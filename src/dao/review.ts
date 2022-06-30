@@ -26,6 +26,12 @@ const insertReviewQuery = (review_id : string,user_id : string,place_id : string
 "INSERT INTO review(review_id,user_id,place_id,comment) "+
 `VALUES("${review_id}","${user_id}","${place_id}",${comment});`;
 
+const updateReviewCommentQuery = (review_id : string,comment : string | null) =>
+`UPDATE review SET comment = ${comment} WHERE review_id="${review_id}";`;
+
+const deleteRviewContentQuery =(review_id : string,imgIds : Array<string>) => {
+
+};
 
 const insertReviewCotentQuery = (review_id : string,image_id : string) =>
 `INSERT INTO review_content(review_id,image_id) VALUES("${review_id}","${image_id}");`;
@@ -39,7 +45,11 @@ class ReviewDao {
         this.connPromise = conn;
     }
 
-
+    public updateReviewComment = async(reviewId : string, comment : string | null) => {
+        const conn = await this.connPromise;
+        const commentArg = comment != null ? `"${comment}"` : null;
+        await conn.execute(updateReviewCommentQuery(reviewId,commentArg));
+    };
     
     public selectReviewContent = async (reviewId : string) : Promise<Array<ReviewContent> | null> => {
         const query = selectReviewContentQuery(reviewId);
