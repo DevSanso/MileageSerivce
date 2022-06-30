@@ -8,7 +8,7 @@ const getUserPointService = async (ctx : ExtendContext,userId : string) => {
     const conn = await ctx.dbPoolConn;
     try {
         await conn.beginTransaction();
-        updateUserPointService(ctx,userId);
+        await updateUserPointService(ctx,userId);
         await conn.commit();
     }catch(e) {
         conn.rollback();
