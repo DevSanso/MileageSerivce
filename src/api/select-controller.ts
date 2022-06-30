@@ -4,6 +4,7 @@ import {ExtendContext} from '../utils/extend/koa/context';
 
 import getUserPointService from '../services/get_user_point';
 import selectReviewPointService from '../services/db/select_review_point';
+import selectAllPointPlusLogService from '../services/db/select_all_point_plus_log';
 
 import {ErrorObject,ErrorType} from '../middleware/type/error-object';
 
@@ -39,10 +40,16 @@ const selectReviewPointHandle = async (ctx : ExtendContext)=> {
     ctx.body = JSON.stringify(responseBody);
 };
 
+const selectPointPlusLogHandle = async (ctx : ExtendContext) => {
+    const log = await selectAllPointPlusLogService(ctx);
+    ctx.status = 200;
+    ctx.body = JSON.stringify(log);
+}
 
 
 
 controller.get("select-user-point","/point/user",selectUserPointHandle);
 controller.get("select-review-point","/point/review",selectReviewPointHandle) ;
+controller.get("select-point-plus-log","/point/log/plus",selectPointPlusLogHandle);
 export default controller;
 
