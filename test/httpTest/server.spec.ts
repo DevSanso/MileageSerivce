@@ -32,40 +32,55 @@ describe("http 서버 테스트",()=>{
     before(()=> {
         server.listen(3000);
     });
-    const request = makeRandomEventBody("hello world");
-    it("Post /events 처리 Test",async () => {
+    
+    describe("Post 처리 Test",() => {
+        const request = makeRandomEventBody("hello world");
+        it("/events 처리 Test",async () => {
 
-        const res = await axios.post("http://localhost:3000/events",request);
-        expect(res.status).to.equal(200);
-        const dbTuple = onlyDaoCtx.daoProvider.review().selectReview(request.reviewId);
-        expect(dbTuple).to.not.equal(null);
-    })
-
-    it("Get /point/user 처리 Test",async()=> {
-        const url = `http://localhost:${port}/point/user?userId=${request.userId}`;
-        const res = await axios.get(url);
-        expect(res.status).to.equal(200);
-        expect(res.data.point).to.equal(3); 
+            const res = await axios.post("http://localhost:3000/events",request);
+            expect(res.status).to.equal(200);
+            const dbTuple = onlyDaoCtx.daoProvider.review().selectReview(request.reviewId);
+            expect(dbTuple).to.not.equal(null);
+        })
+        it("모든 테이블 튜플 삭제",async() => {
+            await deleteAllData(await conn);
+        })
     });
 
-    it("Get /point/review 처리 Test",async()=> {
-        const url =`http://localhost:${port}/point/review?reviewId=${request.reviewId}`;
-        const res = await axios.get(url);
-        expect(res.status).to.equal(200);
-        expect(res.data.point).to.equal(3); 
+    describe("Get 처리 Test",()=> {
+        const request = makeRandomEventBody("hello world");
+        it("리뷰 생성",async() => {
+            const res = await axios.post("http://localhost:3000/events",request);
+        });
+        it("/point/user 처리 Test",async()=> {
+            const url = `http://localhost:${port}/point/user?userId=${request.userId}`;
+            const res = await axios.get(url);
+            expect(res.status).to.equal(200);
+            expect(res.data.point).to.equal(3); 
+        });
+    
+        it("/point/review 처리 Test",async()=> {
+            const url =`http://localhost:${port}/point/review?reviewId=${request.reviewId}`;
+            const res = await axios.get(url);
+            expect(res.status).to.equal(200);
+            expect(res.data.point).to.equal(3); 
+        });
+    
+        it("/point/log/plus 처리 Test",async()=> {
+            const url =`http://localhost:${port}/point/log/plus`;
+            const res = await axios.get(url);
+            expect(res.status).to.equal(200);
+            expect(res.data.length).to.equal(1); 
+            const element = res.data[0];
+            expect(element.reviewId).to.equal(request.reviewId);
+        });
+        it("모든 테이블 튜플 삭제",async() => {
+            await deleteAllData(await conn);
+        })
     });
 
-    it("Get /point/log/plus 처리 Test",async()=> {
-        const url =`http://localhost:${port}/point/log/plus`;
-        const res = await axios.get(url);
-        expect(res.status).to.equal(200);
-        expect(res.data.length).to.equal(1); 
-        const element = res.data[0];
-        expect(element.reviewId).to.equal(request.reviewId);
-    });
+   
 
 
-    it("모든 테이블 튜플 삭제 Test",async() => {
-        await deleteAllData(await conn);
-    })
+    
 });
