@@ -15,6 +15,7 @@ import selectReviewService from './db/select_review';
 import updateReviewCommentService from './db/update_review_comment';
 import insertImagesService from './db/insert_images';
 
+
 type ServiceArgsType = Omit<RequestBody,"action" | "type" >;
 
 
@@ -22,11 +23,11 @@ const afterTreatment = async (ctx : ExtendContext,args : ServiceArgsType) => {
     const flag = await selectReviewPointFlagService(ctx,args.reviewId) as ReviewPointFlag;
     if(flag.isFirstReview || flag.isTextWrite || flag.isUpdateImage) 
         await insertPointPlusLogService(ctx,args.reviewId,flag);
-}
+};
 
 
 const chkProps = <P extends keyof ServiceArgsType>(args : ServiceArgsType, props : P) => 
-    args[props] != undefined;
+    args[props] !== undefined && args[props] !== null;
 
 
 const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
@@ -40,6 +41,7 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
             await createReviewService(ctx,args);
         if((await existUserPoint) == null)
             await createUserPointService(ctx,args.userId); 
+        
 
         await conn.beginTransaction();
 
@@ -49,9 +51,8 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
         if(chkProps(args,"attachedPhotoIds")) {
             insertImagesPromise = insertImagesService(ctx,args.reviewId,args.attachedPhotoIds as Array<string>);
         }
-        if(chkProps(args,"content")) {
-            updateCommentPromise = updateReviewCommentService(ctx,args.reviewId,
-                args.content != undefined?args.content : null);
+        if(args["content"] !== undefined) {
+            updateCommentPromise = updateReviewCommentService(ctx,args.reviewId,args.content as string | null);
         }
  
         
@@ -66,7 +67,7 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
         conn.rollback();
         throw e;
     }
-}
+};
 
 export default addReviewService;
 
