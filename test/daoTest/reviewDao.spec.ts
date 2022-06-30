@@ -56,6 +56,19 @@ describe("ReviewDao Object Test",()=>{
         expect(reviewFlag.isUpdateImage).to.equal(false);
     });
 
+    it("dao 리뷰 내용 변경 및  플래그 업데이트 후 조회 test",async() => {
+        await dao.updateReviewComment(reviewId,"hi");
+        const review = await dao.selectReview(reviewId) as Review;
+        expect(review.comment).to.equal("hi");
+        await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
+        let reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
+        expect(reviewFlag.isTextWrite).to.equal(true);
+        await dao.updateReviewComment(reviewId,null);
+        await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
+        reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
+        expect(reviewFlag.isTextWrite).to.equal(false);
+    });
+
     
     it("dao 첫번째 리뷰 관련 처리 test",async() => {
 

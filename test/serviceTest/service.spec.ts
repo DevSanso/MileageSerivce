@@ -44,7 +44,7 @@ describe("서비스 test",()=> {
 
         it("생성된 리뷰 포인트 플래그 값 확인",async() => {
             const res = await onlyDaoCtx.daoProvider
-                    .review()
+                    .reviewPointFlag()
                     .selectReviewPointFlag(firstBody.reviewId) as ReviewPointFlag;
 
             expect(res).to.not.equal(null);
@@ -55,7 +55,7 @@ describe("서비스 test",()=> {
 
         it("빈 콘텐츠, 첫번째 유저랑 같은 ,첫번째가 아닌 리뷰 생성",async()=>{
             const other : RequestBody= Object.assign({},firstBody);
-            other.content = null;
+            other.content = undefined;
             other.reviewId = uuid();
             other.attachedPhotoIds = [uuid()];
             
@@ -64,7 +64,7 @@ describe("서비스 test",()=> {
         });
         it("빈 콘텐츠, 빈 이미지, 첫번째 유저랑 다른 ,첫번째가 아닌 리뷰 생성",async()=>{
             const other : RequestBody= Object.assign({},firstBody);
-            other.content = null;
+            other.content = undefined;
             other.reviewId = uuid();
             other.userId = uuid();
             other.attachedPhotoIds = [];
