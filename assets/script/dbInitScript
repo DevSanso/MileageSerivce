@@ -1,0 +1,24 @@
+const path = require("path");
+const cp = require('child_process');
+
+const p = (sub) => path.join(process.cwd(),sub);
+
+const initVar = (e ,init) => e != undefined ? e : init;
+const shell = (host,port,user,password,database,sqlPath) =>`mysql -h${host} -P${port} -u${user} -p${password} ${database}< ${sqlPath}`;
+
+const run = (sqlPath) => {
+    let host = initVar(process.env["DATABASE_HOST"],"localhost");
+    let user = initVar(process.env["DATABASE_USER"],"root");
+    let password = initVar(process.env["DATABASE_PASSWORD"],"");
+    let database = initVar(process.env["DATABASE_DBNAME"],"");
+
+    let parsed = parseInt(initVar(process.env["DATABASE_PORT"],""));
+    let port = isNaN(parsed) ? 3306 : parsed;
+
+    cp.execSync(shell(host,port,user,password,database,sqlPath));
+};
+
+run(dbConfig,p("/sql/table.sql"));
+run(dbConfig,p("/sql/index.sql"));
+run(dbConfig,p("/sql/trigger.sql"));
+run(dbConfig,p("/sql/procedure.sql"));

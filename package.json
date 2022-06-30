@@ -6,8 +6,9 @@
   "scripts": {
     "test": "npx mocha test/list.spec.ts -r ts-node/register --exit",
     "test-server": "npx ts-node ./scripts/ts/test_run_server.ts",
-    "build" : "npx tsc --build",
-    "bundle" : "npx esbuild ./dist/server.js --bundle --platform=node  --outfile=./bundle/app.js"
+    "compile" : "npx tsc --build",
+    "bundle" : "npx esbuild ./dist/server.js --bundle --platform=node  --outfile=./bundle/app.js",
+    "postinstall": "node ./.hook/postinstall.js"
   },
   "repository": {
     "type": "git",
