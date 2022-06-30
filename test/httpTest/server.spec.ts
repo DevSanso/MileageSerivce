@@ -55,8 +55,17 @@ describe("http 서버 테스트",()=>{
         expect(res.data.point).to.equal(3); 
     });
 
+    it("Get /point/log/plus 처리 Test",async()=> {
+        const url =`http://localhost:${port}/point/log/plus`;
+        const res = await axios.get(url);
+        expect(res.status).to.equal(200);
+        expect(res.data.length).to.equal(1); 
+        const element = res.data[0];
+        expect(element.reviewId).to.equal(request.reviewId);
+    });
+
 
     it("모든 테이블 튜플 삭제 Test",async() => {
-        //await deleteAllData(await conn);
+        await deleteAllData(await conn);
     })
 });
