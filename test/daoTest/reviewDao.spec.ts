@@ -67,15 +67,13 @@ describe("ReviewDao Object Test",()=>{
         let reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
         expect(reviewFlag.isTextWrite).to.equal(true);
 
-        await dao.updateReviewComment(reviewId,null);
-        await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
-        reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
-        expect(reviewFlag.isTextWrite).to.equal(false);
+ 
 
         await dao.deleteImages(reviewId);
         await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
         reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
-        expect(reviewFlag.isTextWrite).to.equal(false);
+        expect(reviewFlag.isUpdateImage).to.equal(false);
+        expect(reviewFlag.isFirstReview).to.equal(true);
     });
 
     
@@ -89,9 +87,9 @@ describe("ReviewDao Object Test",()=>{
                 content : comment
             });
             await daoFlag.createReviewPointFlag(review_id);
-        }
+        };
 
-        await daoFlag.updateReviewPointFlagProc(reviewId,placeId);
+
         let reviewFlag = await daoFlag.selectReviewPointFlag(reviewId) as ReviewPointFlag;
 
         expect(reviewFlag.isFirstReview).to.equal(true);

@@ -3,7 +3,7 @@ CREATE TABLE review(
     review_id CHAR(36) UNIQUE,
     user_id  CHAR(36) NOT NULL,
     place_id  CHAR(36) NOT NULL,
-    comment VARCHAR(1024),
+    comment VARCHAR(1024) NOT NULL,
 
     PRIMARY KEY(review_id)
 );

@@ -41,6 +41,11 @@ describe("http 서버 테스트",()=>{
             const dbTuple = onlyDaoCtx.daoProvider.review().selectReview(request.reviewId);
             expect(dbTuple).to.not.equal(null);
         })
+        it("/events 중복 에러 처리 Test",async () => {
+            const res = await axios.post("http://localhost:3000/events",request,{validateStatus : () => true});
+            expect(res.status).to.equal(400);
+            expect(res.data).to.equal("already exist user review");
+        })
 
         it("/events mod 액션 이미지 수정 Test",async () => {
 

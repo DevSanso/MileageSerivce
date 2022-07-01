@@ -15,6 +15,7 @@ import selectReviewService from './db/select_review';
 import updateReviewCommentService from './db/update_review_comment';
 import insertImagesService from './db/insert_images';
 import { ErrorObject, ErrorType } from '../middleware/type/error-object';
+import existUserReivewInPlaceService from './db/exist_user_review_in_place';
 
 
 type ServiceArgsType = Omit<RequestBody,"action" | "type" >;
@@ -39,7 +40,14 @@ const chkProps = <P extends keyof ServiceArgsType>(args : ServiceArgsType, props
  */
 const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
     const conn = await ctx.dbPoolConn;
-   
+    if(typeof args["content"] !== "string") {
+        throw new ErrorObject(ErrorType.Request,"/events",400,"not exist content value in request body");
+    }
+    //장소에 리뷰 있는지 확인
+    const exists = await existUserReivewInPlaceService(ctx,args.userId,args.placeId);
+    if(exists) {
+        throw new ErrorObject(ErrorType.Request,"/events",400,"already exist user review");
+    }
     try {
         //reivew ,user_point 테이블에 튜플 생성 및 초기화
         await createReviewService(ctx,args);
@@ -50,7 +58,7 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
 
         await conn.beginTransaction();
 
-        let updateCommentPromise : Promise<void> | null = null;
+        let updateCommentPromise = updateReviewCommentService(ctx,args.reviewId,args.content);
         let insertImagesPromise : Promise<void> | null = null;
         
         /*
@@ -59,10 +67,7 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
         if(chkProps(args,"attachedPhotoIds")) {
             insertImagesPromise = insertImagesService(ctx,args.reviewId,args.attachedPhotoIds as Array<string>);
         }
-        if(args["content"] !== undefined) {
-            //review 튜플에 컨텐츠 글 업데이트
-            updateCommentPromise = updateReviewCommentService(ctx,args.reviewId,args.content as string | null);
-        }
+
  
         
         await updateCommentPromise;

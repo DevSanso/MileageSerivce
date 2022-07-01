@@ -9,6 +9,7 @@ import Body from '../api/body/event';
 
 import transReviewContent from '../dtfp/review_content';
 import transReview from '../dtfp/review';
+import { ErrorObject, ErrorType } from '../middleware/type/error-object';
 
 
 type InsertParam = Omit<Body,"action" | "type" | "attachedPhotoIds">;
@@ -27,14 +28,18 @@ const insertReviewQuery = (review_id : string,user_id : string,place_id : string
 "INSERT INTO review(review_id,user_id,place_id,comment) "+
 `VALUES("${review_id}","${user_id}","${place_id}",${comment});`;
 
-const updateReviewCommentQuery = (review_id : string,comment : string | null) =>
-`UPDATE review SET comment = ${comment} WHERE review_id="${review_id}";`;
+const updateReviewCommentQuery = (review_id : string,comment : string) =>
+`UPDATE review SET comment = "${comment}" WHERE review_id="${review_id}";`;
 
 const insertReviewCotentQuery = (review_id : string,image_id : string) =>
 `INSERT INTO review_content(review_id,image_id) VALUES("${review_id}","${image_id}");`;
 
 const deleteReivewQuery = (review_id : string) =>
 `DELETE FROM review WHERE review_id = "${review_id}";`;
+
+const existUserReviewFromPlaceQuery = (user_id : string,place_id : string) => {
+    return `SELECT EXISTS(SELECT * FROM review WHERE user_id="${user_id}" AND place_id="${place_id}" LIMIT 1) AS review_exists;`;
+}
 
 /**
  * review 테이블 입출력 dao 클래스
@@ -51,12 +56,11 @@ class ReviewDao {
      * @param reviewId 
      * 리뷰 uuid 값
      * @param comment
-     * 업데이트  할 문자열 , 만약 "" 또는 null 일시 해당 속성은 NULL으로 업데이트 된다. 
+     * 업데이트  할 문자열
      */
-    public updateReviewComment = async(reviewId : string, comment : string | null) => {
+    public updateReviewComment = async(reviewId : string, comment : string) => {
         const conn = await this.connPromise;
-        const commentArg = comment != null ? `"${comment}"` : null;
-        await conn.execute(updateReviewCommentQuery(reviewId,commentArg));
+        await conn.execute(updateReviewCommentQuery(reviewId,comment));
     };
     /**
      * 리뷰 컨텐츠(이미지 배열) 튜플 조회 함수
@@ -129,6 +133,16 @@ class ReviewDao {
     public deleteReview = async (reviewId : string) => {
         const conn = await this.connPromise;
         await conn.execute(deleteReivewQuery(reviewId));
+    };
+    public existUserReviewFromPlace = async (userId : string,placeId : string)  : Promise<boolean>=> {
+        const conn = await this.connPromise;
+        const query= existUserReviewFromPlaceQuery(userId,placeId);
+        const [rows,_] : [RowDataPacket[],FieldPacket[]] = await conn.query(query);
+
+        if(typeof rows[0].review_exists !== "number")
+            throw new ErrorObject(ErrorType.System,"reviewDao existUserRviewFromPlace",500,"select data not number");
+
+        return rows[0].review_exists == 1 ? true : false;
     }
 
 }

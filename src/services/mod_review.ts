@@ -53,8 +53,8 @@ const modReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
             await deleteImagesService(ctx,args.reviewId);
             await insertImagesService(ctx,args.reviewId,args.attachedPhotoIds as Array<string>);
         }
-        if(args["content"]) {
-            await updateReviewCommentService(ctx,args.reviewId,args.content as string | null);
+        if(typeof args["content"] === "string") {
+            await updateReviewCommentService(ctx,args.reviewId,args.content);
         }
          //모든 생성 및 업데이트가 완료되면 해당 테이블들을 조회하며, 해당 리뷰에 포인트를 부여
         //만약 포인트 증감이면 로그에 기록

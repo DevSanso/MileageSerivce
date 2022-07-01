@@ -50,10 +50,10 @@
 ## Success Response
 
 *  type 값이 ADD 일때  
-    **필수 속성값** : type,"action","reviewId","userId","placeId"  
-    **옵션** : "content" , "attachedPhotoIds"
+    **필수 속성값** : "type","action","reviewId","userId","placeId" ,"content" 
+    **옵션** :  "attachedPhotoIds"
 
-    **상태 코드** : `201 OK`
+    **상태 코드** : `201 CREATED`
 
     **Content example**
 
@@ -61,10 +61,10 @@
     "Ok"
 ```
 *  type 값이 MOD 일때  
-    **필수 속성값** : type,"action","reviewId","userId","placeId"  
+    **필수 속성값** : "type","action","reviewId","userId","placeId"  
     **옵션** : "content" , "attachedPhotoIds"
 
-    **상태 코드** : `200 CREATED`
+    **상태 코드** : `200 OK`
 
     **Content example**
 

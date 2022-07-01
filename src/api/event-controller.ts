@@ -21,7 +21,6 @@ const controller = new Router<any,ExtendContext>();
  * 리퀘스트 body
  */
 const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
-    body.content = body.content == "" ? null : body.content;
     try {
         await addReviewService(ctx,body);
     }catch(e) {
@@ -37,7 +36,6 @@ const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
  * 리퀘스트 body
  */
 const modTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
-    body.content = body.content == "" ? null : body.content;
     try {
         await modReviewService(ctx,body);
     }catch(e) {

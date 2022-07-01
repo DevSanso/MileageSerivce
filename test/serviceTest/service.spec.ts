@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import {expect, should} from 'chai';
 import mysql from 'mysql2/promise';
 import {uuid} from 'uuidv4';
 
@@ -41,6 +41,16 @@ describe("서비스 test",()=> {
             expect(resImage).to.not.equal(null);
             expect(resImage?.length).to.equal(2);
         });
+        it("중복 값 에러 처리 확인",async () => {
+            const promise =  addReviewService(onlyDaoCtx,firstBody);
+            let chk = 0;
+            try {
+                await promise;
+            }catch(e) {
+                chk = 1;
+            }
+            expect(chk,"중복값 에러 처리 안됨").to.equal(1);
+        });
         it("포인터 증감 로그 확인",async() => {
             const arr = await selectAllPointPlusLogService(onlyDaoCtx);
             expect(arr.length).to.equal(1);
@@ -57,18 +67,10 @@ describe("서비스 test",()=> {
             expect(res.isUpdateImage).to.equal(true);
         });
 
-        it("빈 콘텐츠, 첫번째 유저랑 같은 ,첫번째가 아닌 리뷰 생성",async()=>{
+
+        it("빈 이미지, 첫번째 유저랑 다른 ,첫번째가 아닌 리뷰 생성",async()=>{
             const other : RequestBody= Object.assign({},firstBody);
-            other.content = null;
-            other.reviewId = uuid();
-            other.attachedPhotoIds = [uuid()];
-            
-            await addReviewService(onlyDaoCtx,other);
-            expect(firstBody.userId).to.equal(other.userId);
-        });
-        it("빈 콘텐츠, 빈 이미지, 첫번째 유저랑 다른 ,첫번째가 아닌 리뷰 생성",async()=>{
-            const other : RequestBody= Object.assign({},firstBody);
-            other.content = null;
+            other.content = "hello";
             other.reviewId = uuid();
             other.userId = uuid();
             other.attachedPhotoIds = [];
@@ -86,14 +88,14 @@ describe("서비스 test",()=> {
             expect(arr[0].updateImageFlag).to.equal(true);
 
             expect(arr[1].firstReviewFlag).to.equal(false);
-            expect(arr[1].textWritePlusFlag).to.equal(false);
-            expect(arr[1].updateImageFlag).to.equal(true);
+            expect(arr[1].textWritePlusFlag).to.equal(true);
+            expect(arr[1].updateImageFlag).to.equal(false);
         });
 
         it("유저 포인트 총합 값 확인",async() => {
             const res = await getUserPointService(onlyDaoCtx,firstBody.userId) as UserPoint;
             expect(res).to.not.equal(null);
-            expect(res.point).to.equal(4);
+            expect(res.point).to.equal(3);
         });
 
         it("mod review 서비스 Test",async() => {
