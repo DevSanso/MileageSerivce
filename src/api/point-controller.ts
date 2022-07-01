@@ -41,7 +41,10 @@ const selectReviewPointHandle = async (ctx : ExtendContext)=> {
         throw new ErrorObject(ErrorType.Request,"/point/review",400,`not exist or miss match type  reviewIdQuery query : url => ${ctx.url}`);
     
     const point = await selectReviewPointService(ctx,reviewQuery);
-    const responseBody = point !== null ? {point : point} : null;
+    if(point == null) {
+        throw new ErrorObject(ErrorType.Request,"/point/review",400,`not exist review data : ${reviewQuery}`);
+    }
+    const responseBody = {point : point};
     ctx.status = 200;
     ctx.body = JSON.stringify(responseBody);
 };
