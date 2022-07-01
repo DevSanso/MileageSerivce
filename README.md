@@ -43,7 +43,11 @@ node ./app.js
 
 
 
-  
+# Rest 문서  
+[/events](./docs/rest/events.md)  
+[/point/user](./docs/rest/point_user.md)  
+[/point/reivew](./docs/rest/point_review.md)  
+[/point/log/plus](./docs/rest/point_log_plus.md)
   
 # 참고
 [프로젝트 패키지 개요](docs/project.md)
