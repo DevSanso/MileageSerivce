@@ -12,7 +12,14 @@ import {ErrorObject,ErrorType} from '../middleware/type/error-object';
 
 
 const controller = new Router<any,ExtendContext>();
-
+/**
+ * 
+ *  리뷰 생성 핸들러
+ * @param ctx
+ * koa 커스텀 확장 컨텍스트
+ * @param body
+ * 리퀘스트 body
+ */
 const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
     body.content = body.content == "" ? null : body.content;
     try {
@@ -22,7 +29,13 @@ const addTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
         throw new ErrorObject(ErrorType.DB,"/events",500,JSON.stringify(e));
     }
 };
-
+/**
+ * 리뷰 컨텐츠, 이미지 배열 수정 핸들러
+ * @param ctx 
+ * koa 커스텀 확장 컨텍스트
+ * @param body 
+ * 리퀘스트 body
+ */
 const modTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
     body.content = body.content == "" ? null : body.content;
     try {
@@ -31,7 +44,13 @@ const modTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
         throw new ErrorObject(ErrorType.DB,"/events",500,JSON.stringify(e));
     }
 };
-
+/**
+ * 리뷰 삭제 핸들러
+ * @param ctx 
+ * koa 커스텀 확장 컨텍스트
+ * @param body 
+ * 리퀘스트 body, 사용하는 속성값은 reviewId 하나
+ */
 const deleteTypeReviewHandle = async (ctx : ExtendContext,body : BodyType) => {
     const reviewId = body.reviewId;
     try {
@@ -40,7 +59,12 @@ const deleteTypeReviewHandle = async (ctx : ExtendContext,body : BodyType) => {
         throw new ErrorObject(ErrorType.DB,"/events",500,JSON.stringify(e));
     }
 };
-
+/**
+ * 리뷰 ADD | MOD 핸들러 리퀫트 body 필수 속성값 확인 함수
+ * 만약 조건이 불일치일시  ErrorObject의 http code를 400으로 설정한후 에러를 throw 한다.
+ * @param body 
+ * 리퀘스트 body
+ */
 const checkAddAndModP = (body : any) => {
     const chk = !checkProps<BodyType>(body,
         ["placeId","reviewId","type","userId"]);
@@ -49,7 +73,12 @@ const checkAddAndModP = (body : any) => {
         "/events",400,
         `bad request body : ${JSON.stringify(body)}`);
 }
-
+/**
+ * 리뷰 DELETE 핸들러 리퀫트 body 필수 속성값 확인 함수
+ * 만약 조건이 불일치일시  ErrorObject의 http code를 400으로 설정한후 에러를 throw 한다.
+ * @param body 
+ * 리퀘스트 body
+ */
 const checkDeleteP = (body : any) => {
     const chk = !checkProps<BodyType>(body,["reviewId","type"]);
 

@@ -10,7 +10,11 @@ import {ErrorObject,ErrorType} from '../middleware/type/error-object';
 
 
 const controller = new Router<any,ExtendContext>();
-
+/**
+ * 호출시점 유저의 포인트 총합 핸들러
+ * @param ctx 
+ * koa 커스텀 확장 컨텍스트
+ */
 const selectUserPointHandle = async (ctx : ExtendContext)=> {
     const userIdQuery = ctx.query.userId as string;
     if(typeof userIdQuery !== "string") 
@@ -25,7 +29,11 @@ const selectUserPointHandle = async (ctx : ExtendContext)=> {
     ctx.body = JSON.stringify(res);
   
 };
-
+/**
+ * 추가된 리뷰에 적용된 점수 조회 핸들러
+ * @param ctx 
+ * koa 커스텀 확장 컨텍스트
+ */
 const selectReviewPointHandle = async (ctx : ExtendContext)=> {
     const reviewQuery = ctx.query.reviewId as string;
 
@@ -37,7 +45,11 @@ const selectReviewPointHandle = async (ctx : ExtendContext)=> {
     ctx.status = 200;
     ctx.body = JSON.stringify(responseBody);
 };
-
+/**
+ * 리뷰의 점수 증감시의 기록한 로그를 배열 형태로 응답하는 핸들러
+ * @param ctx 
+ * koa 커스텀 확장 컨텍스트
+ */
 const selectPointPlusLogHandle = async (ctx : ExtendContext) => {
     const log = await selectAllPointPlusLogService(ctx);
     ctx.status = 200;
