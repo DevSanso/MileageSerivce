@@ -32,14 +32,22 @@ const afterTreatment = async (ctx : ExtendContext,args : ServiceArgsType) => {
 const chkProps = <P extends keyof ServiceArgsType>(args : ServiceArgsType, props : P) => 
     args[props] !== undefined;
 
-
+/**
+ * 리뷰 데이터 업데이트 서비스
+ * @param ctx 
+ * koa 커스텀 컨텍스트, dao , db 커넥션 접근을 위해 사용
+ * @param args 
+ * 테이블 값 업데이트에 사용할 객체
+ */
 const modReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
     const conn = await ctx.dbPoolConn;
     
     try {
 
         await conn.beginTransaction();
-        
+        /*
+        이미지 배열, 컨텐츠 글의 존재 유무에 따라 각각에 맞는 서비스 호출
+        */
         if(chkProps(args,"attachedPhotoIds")) {
             if(args["attachedPhotoIds"] === null)args.attachedPhotoIds = [];
             await deleteImagesService(ctx,args.reviewId);
@@ -48,6 +56,8 @@ const modReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
         if(args["content"]) {
             await updateReviewCommentService(ctx,args.reviewId,args.content as string | null);
         }
+         //모든 생성 및 업데이트가 완료되면 해당 테이블들을 조회하며, 해당 리뷰에 포인트를 부여
+        //만약 포인트 증감이면 로그에 기록
         await afterTreatment(ctx,args);
         await conn.commit();
         

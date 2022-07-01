@@ -30,12 +30,18 @@ const afterTreatment = async (ctx : ExtendContext,args : ServiceArgsType) => {
 const chkProps = <P extends keyof ServiceArgsType>(args : ServiceArgsType, props : P) => 
     args[props] !== undefined && args[props] !== null;
 
-
+/**
+ * 리뷰 생성 서비스
+ * @param ctx 
+ * koa 커스텀 컨텍스트, dao , db 커넥션 접근을 위해 사용
+ * @param args 
+ * 테이블 생성에 사용할 객체
+ */
 const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
     const conn = await ctx.dbPoolConn;
    
     try {
-
+        //reivew ,user_point 테이블에 튜플 생성 및 초기화
         await createReviewService(ctx,args);
         await createUserPointService(ctx,args.userId); 
 
@@ -47,10 +53,14 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
         let updateCommentPromise : Promise<void> | null = null;
         let insertImagesPromise : Promise<void> | null = null;
         
+        /*
+        이미지 배열, 컨텐츠 글의 존재 유무에 따라 각각에 맞는 서비스 호출
+        */
         if(chkProps(args,"attachedPhotoIds")) {
             insertImagesPromise = insertImagesService(ctx,args.reviewId,args.attachedPhotoIds as Array<string>);
         }
         if(args["content"] !== undefined) {
+            //review 튜플에 컨텐츠 글 업데이트
             updateCommentPromise = updateReviewCommentService(ctx,args.reviewId,args.content as string | null);
         }
  
@@ -58,7 +68,9 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
         await updateCommentPromise;
         await insertImagesPromise;
 
+        //모든 생성 및 업데이트가 완료되면 해당 테이블들을 조회하며, 해당 리뷰에 포인트를 부여
         await updateReviewPointFlagService(ctx,args.reviewId,args.placeId);
+        //만약 포인트 증감이면 로그에 기록
         await afterTreatment(ctx,args);
         
         await conn.commit();
