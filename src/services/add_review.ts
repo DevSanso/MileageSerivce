@@ -76,7 +76,7 @@ const addReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
         await conn.commit();
     }catch(e : any) {
         conn.rollback();
-        if(e["errno"] = 1062)
+        if(e["errno"] == 1062)
             throw new ErrorObject(ErrorType.Request,"/events",400,"already exist review");
         throw e;
     }
