@@ -29,7 +29,7 @@ node ./app.js
 |DATABASE_PORT|데이터베이스 포트|3306|
 |DATABASE_USER|데이터베이스 유저|root|
 |DATABASE_PASSWORD|데이터베이스 패스워드||
-|DATABASE_DBNAME|데이터베이스 접근 디비이름|test|
+|DATABASE_DBNAME|데이터베이스 접근 디비이름||
 |SERVER_PORT|실행할 서버 포트|3000|
 
 
