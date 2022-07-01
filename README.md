@@ -5,6 +5,8 @@
 mysql(MySQL Command Line Client)
 nodejs : v18.4.0
 ```
+## 주의
+데이터 베이스의 인코딩을 utf8로 변경해주세요
 ## 설치 과정
 1. 깃협 저장소의 releases에서 [v0.9](https://github.com/DevSanso/MileageSerivce/releases/tag/v0.9)에서 app.zip 파일을 다운로드후 압축 해제 
 
