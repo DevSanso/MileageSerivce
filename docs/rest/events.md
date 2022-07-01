@@ -50,7 +50,7 @@
 ## Success Response
 
 *  type 값이 ADD 일때  
-    **필수 속성값** : "type","action","reviewId","userId","placeId" ,"content" 
+    **필수 속성값** : "type","action","reviewId","userId","placeId" ,"content"  
     **옵션** :  "attachedPhotoIds"
 
     **상태 코드** : `201 CREATED`
