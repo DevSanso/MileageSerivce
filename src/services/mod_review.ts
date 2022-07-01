@@ -3,7 +3,7 @@ import {ExtendContext} from '../utils/extend/koa/context';
 import RequestBody from '../api/body/event';
 import ReviewPointFlag from '../models/review_point_flag';
 
-
+import { ErrorObject, ErrorType } from '../middleware/type/error-object';
 
 import deleteImagesService from './db/delete_images';
 import updateReviewPointFlagService from './db/update_review_point_flag';
@@ -12,6 +12,7 @@ import insertPointPlusLogService from './db/insert_plus_log';
 
 import updateReviewCommentService from './db/update_review_comment';
 import insertImagesService from './db/insert_images';
+import selectReviewService from './db/select_review';
 
 
 type ServiceArgsType = Omit<RequestBody,"action" | "type" | "userId" >;
@@ -41,7 +42,10 @@ const chkProps = <P extends keyof ServiceArgsType>(args : ServiceArgsType, props
  */
 const modReviewService = async (ctx : ExtendContext,args : ServiceArgsType) => {
     const conn = await ctx.dbPoolConn;
-    
+    const exists = await selectReviewService(ctx,args.reviewId);
+    if(exists == null) {
+        throw new ErrorObject(ErrorType.Request,"/events",400,"not exist review");
+    }
     try {
 
         await conn.beginTransaction();

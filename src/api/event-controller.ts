@@ -39,6 +39,7 @@ const modTypeReviewHandle = async (ctx : ExtendContext,body : BodyType)=>  {
     try {
         await modReviewService(ctx,body);
     }catch(e) {
+        if(e instanceof ErrorObject)throw e;
         throw new ErrorObject(ErrorType.DB,"/events",500,JSON.stringify(e));
     }
 };
@@ -54,6 +55,7 @@ const deleteTypeReviewHandle = async (ctx : ExtendContext,body : BodyType) => {
     try {
         await deleteReviewService (ctx,reviewId);
     }catch(e) {
+        if(e instanceof ErrorObject)throw e;
         throw new ErrorObject(ErrorType.DB,"/events",500,JSON.stringify(e));
     }
 };
